@@ -1,0 +1,793 @@
+// HTML要素を取得
+
+const settingScreen = document.getElementById("settingScreen");
+const cameraScreen = document.getElementById("cameraScreen");
+const backButton = document.getElementById("backButton");
+const thresholdSlider = document.getElementById("thresholdSlider");
+const thresholdValue = document.getElementById("thresholdValue");
+const sensitivitySlider = document.getElementById("sensitivitySlider");
+const sensitivityValue = document.getElementById("sensitivityValue");
+const toCameraFromSetting = document.getElementById("toCameraFromSetting");
+const loginScreen = document.getElementById("loginScreen");
+const loginButton = document.getElementById("loginButton");
+const loginNameInput = document.getElementById("loginName");
+const scoreScreen = document.getElementById("scoreScreen");
+const goodTimeEl = document.getElementById("goodTime");
+const badTimeEl = document.getElementById("badTime");
+const scoreValueEl = document.getElementById("scoreValue");
+const scoreMessageEl = document.getElementById("scoreMessage");
+const backToSettingButton = document.getElementById("backToSettingButton");
+const loginUserNameEl = document.getElementById("loginUserName");
+const video = document.getElementById("cam");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const button = document.getElementById("startStopButton");
+const postureStatus = document.getElementById("postureStatus");
+const angleInfo = document.getElementById("angleInfo");
+const goodPostureTimer = document.getElementById("goodPostureTimer");
+const motivationMessage = document.getElementById("motivationMessage");
+
+// 記録用のオブジェクト
+let postureLog = getPostureLog();
+let lastDateKey = getNowKey().dateKey;
+let weeklyChart = null;
+
+// 制御用の変数
+let camera = null;
+let isCameraRunning = false;
+
+// タイマー関連の変数
+let goodPostureStartTime = null;
+let goodPostureTotalTime = 0;
+let lastPostureState = null;
+let lastMessageMilestone = 0;
+
+// 猫背状態の時間管理
+let slouchStartTime = null; // 猫背状態になった時刻
+const SLOUCH_RESET_THRESHOLD = 5000; // 5秒（ミリ秒）
+
+// 悪い姿勢の累計時間（ms）
+let badPostureTotalTime = 0;
+let badPostureStartTime = null;
+
+// 設定値
+let SLOUCH_THRESHOLD = 165;
+let DETECTION_CONFIDENCE = 0.5;
+
+
+
+// 画面切り替え（必ず先に定義）
+function showScreen(screen) {
+  const screens = ["loginScreen", "settingScreen", "cameraScreen", "scoreScreen"];
+  screens.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = "none";
+  });
+
+  if (screen) screen.style.display = "flex";
+}
+
+// 現在時刻を取得する関数
+function getNowKey() {
+    const now = new Date();
+    const dateKey = now.toISOString().slice(0, 10); // YYYY-MM-DD
+    const hourKey = String(now.getHours()).padStart(2, '0'); // 00〜23
+    return { dateKey, hourKey };
+}
+
+// 時間を加算する関数
+function addPostureLog(type, elapsedMs) {
+    const { dateKey, hourKey } = getNowKey();
+
+    if (!postureLog[dateKey]) {
+        postureLog[dateKey] = {};
+    }
+    if (!postureLog[dateKey][hourKey]) {
+        postureLog[dateKey][hourKey] = { good: 0, bad: 0 };
+    }
+
+    postureLog[dateKey][hourKey][type] += elapsedMs;
+    savePostureLog(postureLog);
+    
+}
+// 日付が変わった瞬間の対策する関数
+function checkDateChange(currentTime) {
+    const nowKey = getNowKey().dateKey;
+    if (nowKey !== lastDateKey) {
+
+        // 計測中の姿勢を一度確定
+        if (goodPostureStartTime !== null) {
+            const elapsed = currentTime - goodPostureStartTime;
+            goodPostureTotalTime += elapsed;
+            goodPostureStartTime = currentTime;
+        }
+
+        if (badPostureStartTime !== null) {
+            const elapsed = currentTime - badPostureStartTime;
+            badPostureTotalTime += elapsed;
+            addPostureLog("bad", elapsed);
+            badPostureStartTime = null;
+        }
+
+        lastDateKey = nowKey;
+    }
+}
+// 直近1週間の日付配列を作る関数
+function getLast7Days() {
+    const days = [];
+    const today = new Date();
+
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+
+        const key = d.toISOString().slice(0, 10); // YYYY-MM-DD
+        const label = `${d.getMonth() + 1}/${d.getDate()}`; // M/D
+
+        days.push({ key, label });
+    }
+    return days;
+}
+// 日付ごとの合計時間を集計する関数
+function getWeeklySummary() {
+    const log = getPostureLog();
+    const days = getLast7Days();
+
+    const labels = [];
+    const goodData = [];
+    const badData = [];
+
+    days.forEach(({ key, label }) => {
+        let goodSum = 0;
+        let badSum = 0;
+
+        if (log[key]) {
+            Object.values(log[key]).forEach(hourData => {
+                goodSum += hourData.good || 0;
+                badSum += hourData.bad || 0;
+            });
+        }
+
+        // ms → 分 に変換
+        labels.push(label);
+        goodData.push(Math.floor(goodSum / 60000));
+        badData.push(Math.floor(badSum / 60000));
+    });
+
+    return { labels, goodData, badData };
+}
+// 棒グラフを描画する関数
+function renderWeeklyChart() {
+    const { labels, goodData, badData } = getWeeklySummary();
+    const ctx = document.getElementById("weeklyChart").getContext("2d");
+
+    if (weeklyChart) {
+        weeklyChart.destroy();
+    }
+
+    weeklyChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: "良い姿勢（分）",
+                    data: goodData,
+                    backgroundColor: "rgba(54, 162, 235, 0.7)"
+                },
+                {
+                    label: "猫背（分）",
+                    data: badData,
+                    backgroundColor: "rgba(255, 99, 132, 0.7)"
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: "時間（分）"
+                    }
+                }
+            }
+        }
+    });
+}
+//
+function getPostureLog() {
+    const user = getCurrentUser();
+    if (!user) return {};
+    return JSON.parse(localStorage.getItem(`postureLog_${user}`)) || {};
+}
+//
+function savePostureLog(log) {
+    const user = getCurrentUser();
+    if (!user) return;
+    localStorage.setItem(`postureLog_${user}`, JSON.stringify(log));
+}
+
+/* =========================
+モチベーションメッセージ定義
+良い姿勢の継続時間に応じて表示
+time : ミリ秒
+========================= */
+const motivationMessages = [
+    { time: 30000, message: "🎉 30秒達成！いい調子！" },
+    { time: 60000, message: "✨ 1分達成！素晴らしい！" },
+    { time: 90000, message: "🌟 1分30秒達成！すごいです！" },
+    { time: 120000, message: "🔥 2分達成！その調子！" },
+    { time: 150000, message: "💪 2分30秒達成！頑張ってます！" },
+    { time: 180000, message: "🏆 3分達成！最高です！" },
+    { time: 240000, message: "👑 4分達成！素晴らしい集中力！" },
+    { time: 300000, message: "🌈 5分達成！驚異的です！" },
+    { time: 600000, message: "⭐ 10分達成！プロフェッショナル！" },
+    { time: 1800000, message: "🎯 30分達成！伝説的です！" },
+    { time: 3000000, message: "😶 50分達成！もはや怖い！怖すぎます！逃げろー！！"}
+];
+
+/* =========================
+ミリ秒(ms) → "mm:ss" に変換
+========================= */
+function formatTimeMMSS(ms) {
+  const totalSeconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  // 2桁表示（例：02:07）
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
+/* =========================
+モチベーションメッセージ表示処理
+一定時間ごとに一度だけ表示
+totalTime : 良い姿勢の累計時間
+========================= */
+function showMotivationMessage(totalTime) {
+    for (let i = 0; i < motivationMessages.length; i++) {
+        const milestone = motivationMessages[i];
+        
+        if (totalTime >= milestone.time && lastMessageMilestone < milestone.time) {
+            lastMessageMilestone = milestone.time;
+            motivationMessage.textContent = milestone.message;
+            motivationMessage.classList.remove('reset');
+            motivationMessage.classList.add('show', 'celebrate');
+            
+            setTimeout(() => {
+                motivationMessage.classList.remove('show');
+            }, 3000);
+            
+            setTimeout(() => {
+                motivationMessage.classList.remove('celebrate');
+            }, 600);
+            
+            break;
+        }
+    }
+}
+
+//スコア評価コメント
+function getScoreMessage(score) {
+    if (score >= 90) return "✨ 素晴らしい姿勢です！";
+    if (score >= 70) return "👍 とても良い姿勢です";
+    if (score >= 50) return "🙂 もう少し意識しましょう";
+    return "⚠️ 猫背が多めです";
+}
+// 現在ログイン中のユーザー名を取得する関数
+function getCurrentUser() {
+    return localStorage.getItem("loginUser");
+}
+
+/* =========================
+猫背リセットメッセージ表示
+猫背が一定時間続いた場合に通知
+========================= */
+function showResetMessage() {
+    motivationMessage.textContent = "💥 猫背5秒経過！記録リセット！";
+    motivationMessage.classList.add('reset', 'show', 'celebrate');
+    
+    setTimeout(() => {
+        motivationMessage.classList.remove('show');
+    }, 3000);
+    
+    setTimeout(() => {
+        motivationMessage.classList.remove('celebrate', 'reset');
+    }, 600);
+}
+
+/* =========================
+猫背判定の閾値スライダー
+判定角度をリアルタイム更新
+========================= */
+thresholdSlider.addEventListener('input', (e) => {
+    thresholdValue.textContent = e.target.value;
+    SLOUCH_THRESHOLD = parseInt(e.target.value);
+});
+
+/* =========================
+検出感度スライダー
+MediaPipeの信頼度設定を更新
+========================= */
+sensitivitySlider.addEventListener('input', (e) => {
+    sensitivityValue.textContent = parseFloat(e.target.value).toFixed(1);
+    DETECTION_CONFIDENCE = parseFloat(e.target.value);
+});
+
+/* =========================
+設定画面へ戻る処理
+カメラ動作中は安全に停止
+========================= */
+backButton.addEventListener('click', () => {
+    if (isCameraRunning) {
+        stopCameraAndPose();
+    }
+    
+    cameraScreen.style.display = 'none';
+    settingScreen.style.display = 'flex';
+});
+
+/* =========================
+MediaPipe Pose 初期化
+姿勢推定モデルを準備
+========================= */
+const pose = new Pose({
+    locateFile: (file) => {
+        return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
+    }
+});
+
+/* =========================
+Pose 推定オプション設定
+精度と滑らかさのバランス調整
+========================= */
+pose.setOptions({
+    modelComplexity: 1,
+    smoothLandmarks: true,
+    enableSegmentation: false,
+    minDetectionConfidence: 0.5,
+    minTrackingConfidence: 0.5,
+});
+
+/* =========================
+3点から角度を計算する関数
+pointB を頂点とした角度を算出
+========================= */
+function calculateAngle(pointA, pointB, pointC) {
+    const radians = Math.atan2(pointC.y - pointB.y, pointC.x - pointB.x) -
+                    Math.atan2(pointA.y - pointB.y, pointA.x - pointB.x);
+    let angle = Math.abs(radians * 180.0 / Math.PI);
+    
+    if (angle > 180.0) {
+        angle = 360 - angle;
+    }
+    
+    return angle;
+}
+
+/* =========================
+猫背判定処理
+耳・肩・腰の中点から姿勢角度を算出
+========================= */
+function detectSlouch(landmarks) {
+    const leftEar = landmarks[7];
+    const rightEar = landmarks[8];
+    const leftShoulder = landmarks[11];
+    const rightShoulder = landmarks[12];
+    const leftHip = landmarks[23];
+    const rightHip = landmarks[24];
+
+    const earMid = {
+        x: (leftEar.x + rightEar.x) / 2,
+        y: (leftEar.y + rightEar.y) / 2
+    };
+
+    const shoulderMid = {
+        x: (leftShoulder.x + rightShoulder.x) / 2,
+        y: (leftShoulder.y + rightShoulder.y) / 2
+    };
+
+    const hipMid = {
+        x: (leftHip.x + rightHip.x) / 2,
+        y: (leftHip.y + rightHip.y) / 2
+    };
+
+    const angle = calculateAngle(earMid, shoulderMid, hipMid);
+    const isSlouching = angle < SLOUCH_THRESHOLD;
+
+    return { isSlouching, angle: angle.toFixed(1) };
+}
+
+/* =========================
+Pose 推定結果の受信処理
+毎フレーム呼び出される
+========================= */
+pose.onResults((results) => {
+    // Canvas 初期化処理
+    ctx.save();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const currentTime = Date.now();
+    checkDateChange(currentTime);
+
+    // カメラが起動中なら、取得した映像をCanvasに描画
+    if (isCameraRunning && results.image) {
+        ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
+    }
+    // 姿勢ランドマークが検出された場合
+    if (results.poseLandmarks) {
+        // 猫背判定と角度計算
+        const { isSlouching, angle } = detectSlouch(results.poseLandmarks);
+        const currentTime = Date.now();
+
+        // 骨格の線を描画
+        drawConnectors(ctx, results.poseLandmarks, POSE_CONNECTIONS, {
+            color: '#00FF00',
+            lineWidth: 4
+        });
+        // 関節点を描画
+        drawLandmarks(ctx, results.poseLandmarks, {
+            color: '#FF0000',
+            lineWidth: 2
+        });
+
+        /* =========================
+        【猫背 → 良い姿勢】に戻った瞬間
+        悪い姿勢の経過時間を合計に加算して計測終了
+        ========================= */
+        if (!isSlouching && lastPostureState === true) {
+            // 猫背時間を確定
+            if (badPostureStartTime !== null) {
+                const elapsedBad = currentTime - badPostureStartTime;
+                badPostureTotalTime += currentTime - badPostureStartTime;
+                addPostureLog("bad", elapsedBad);
+                badPostureStartTime = null;
+            }
+            // 良い姿勢の計測を必ず開始
+            goodPostureStartTime = currentTime;
+        }
+        /* =========================
+        【良い姿勢 → 猫背】に変わった瞬間
+        良い姿勢の経過時間を加算し、猫背計測を開始
+        ========================= */
+        if (isSlouching && lastPostureState === false && goodPostureStartTime !== null) {
+            const elapsedGood = currentTime - goodPostureStartTime;
+            goodPostureTotalTime += elapsedGood;
+            addPostureLog("good", elapsedGood);
+            goodPostureStartTime = null;
+            // ここから猫背の時間計測スタート
+            badPostureStartTime = currentTime;
+        }
+
+        // 初回フレームでいきなり猫背だった場合
+        if (isSlouching && lastPostureState === null && badPostureStartTime === null) {
+            badPostureStartTime = currentTime;
+        }
+        // 良い姿勢の場合
+        if (!isSlouching) {
+            // 最初から良い姿勢の場合カウントを進める
+            if (goodPostureStartTime === null) {
+                goodPostureStartTime = currentTime;
+            }
+            // 表示用の良い姿勢時間（計測中なら加算）
+            const displayGoodTime =
+                goodPostureStartTime !== null
+                    ? goodPostureTotalTime + (currentTime - goodPostureStartTime)
+                    : goodPostureTotalTime;
+            // 画面に表示
+            goodPostureTimer.textContent =
+                `良い姿勢: ${formatTimeMMSS(displayGoodTime)}`;
+            // モチベーションメッセージ更新
+            showMotivationMessage(displayGoodTime);
+
+        }
+        // 姿勢ステータス表示
+        if (isSlouching) {
+            postureStatus.textContent = "⚠️ 猫背を検知しました！";
+            postureStatus.className = "bad-posture";
+        } else {
+            postureStatus.textContent = "✅ 良い姿勢です";
+            postureStatus.className = "good-posture";
+        }
+        // 角度情報を表示
+        angleInfo.textContent = `角度: ${angle}° (基準: ${SLOUCH_THRESHOLD}°)`;
+        // 猫背時の警告表示（Canvas）
+        if (isSlouching) {
+            ctx.fillStyle = 'rgba(220, 53, 69, 0.8)';
+            ctx.fillRect(10, 10, 280, 60);
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 24px Arial';
+            ctx.fillText('⚠️ 猫背を検知！', 20, 45);
+        }
+        // 状態を更新
+        lastPostureState = isSlouching;
+    // 姿勢が検出できなかった場合
+    } else {
+        postureStatus.textContent = "姿勢を検出していません";
+        postureStatus.className = "no-detection";
+        angleInfo.textContent = "角度: -- °";
+        // 状態リセット
+        lastPostureState = null;
+        slouchStartTime = null;
+        // 良い姿勢計測中だった場合はここで確定
+        if (goodPostureStartTime !== null) {
+            const currentTime = Date.now();
+            const elapsed = currentTime - goodPostureStartTime;
+            goodPostureTotalTime += elapsed;
+            goodPostureStartTime = null;
+        }
+    }
+    ctx.restore();
+});
+
+// スコア計算ロジック
+function calculateScore(goodMs, badMs) {
+    const total = goodMs + badMs;
+    if (total === 0) return 0;
+    return Math.round((goodMs / total) * 100);
+}
+
+//スコア画面更新
+function updateScoreScreen() {
+    const safeGoodTime =
+        goodPostureStartTime !== null
+            ? goodPostureTotalTime + (Date.now() - goodPostureStartTime)
+            : goodPostureTotalTime;
+
+    const safeBadTime =
+        badPostureStartTime !== null
+            ? badPostureTotalTime + (Date.now() - badPostureStartTime)
+            : badPostureTotalTime;
+
+    const score = calculateScore(safeGoodTime, safeBadTime);
+
+    goodTimeEl.textContent = formatTimeMMSS(safeGoodTime);
+    badTimeEl.textContent = formatTimeMMSS(safeBadTime);
+    scoreValueEl.textContent = score;
+    scoreMessageEl.textContent = getScoreMessage(score);
+}
+//
+function showScoreScreen() {
+    showScreen(scoreScreen);
+    renderWeeklyChart();
+}
+
+//戻るボタン
+backToSettingButton.addEventListener("click", () => {
+    showScreen(settingScreen);
+});
+
+/* =========================
+カメラ＆姿勢推定の開始処理
+MediaPipe Camera を起動
+========================= */
+async function startCameraAndPose() {
+    if (isCameraRunning) return;
+
+    // ===== 計測状態の完全リセット（超重要）=====
+    goodPostureStartTime = null;
+    badPostureStartTime = null;
+    goodPostureTotalTime = 0;
+    badPostureTotalTime = 0;
+    lastPostureState = null;
+    slouchStartTime = null;
+    lastMessageMilestone = 0;
+
+    goodPostureTimer.textContent = "良い姿勢: 00:00";
+    postureStatus.textContent = "姿勢を検出していません";
+    angleInfo.textContent = "角度: -- °";
+    // ============================================
+
+    try {
+        camera = new Camera(video, {
+            onFrame: async () => {
+                if (isCameraRunning) {
+                    await pose.send({ image: video });
+                }
+            },
+            width: 640,
+            height: 480
+        });
+
+        await camera.start();
+        isCameraRunning = true;
+
+        button.textContent = "カメラを停止";
+        button.style.backgroundColor = "#dc3545";
+        console.log("Camera started successfully");
+
+    } catch (error) {
+        console.error("Camera start error:", error);
+        alert("カメラの起動に失敗しました。カメラの権限を確認してください。");
+    }
+}
+
+/* =========================
+カメラ＆姿勢推定の停止処理
+リソース解放とUI初期化
+========================= */
+function stopCameraAndPose() {
+    if (!isCameraRunning) return;
+
+    console.log("Stopping camera...");
+    isCameraRunning = false;
+
+    if (camera) {
+        try {
+            camera.stop();
+        } catch (error) {
+            console.error("Camera stop error:", error);
+        }
+    }
+
+    if (video.srcObject) {
+        const tracks = video.srcObject.getTracks();
+        tracks.forEach(track => {
+            track.stop();
+            console.log("Track stopped:", track.kind);
+        });
+        video.srcObject = null;
+    }
+
+    // 停止時点での未加算分を確定させる
+    const now = Date.now();
+    if (lastPostureState === false && goodPostureStartTime !== null) {
+        goodPostureTotalTime += (now - goodPostureStartTime);
+        goodPostureStartTime = null;
+    }
+    if (lastPostureState === true && badPostureStartTime !== null) {
+        const elapsedBad = now - badPostureStartTime;
+        badPostureTotalTime += (now - badPostureStartTime);
+        addPostureLog("bad", elapsedBad);
+        badPostureStartTime = null;
+    }
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    camera = null;
+    button.textContent = "カメラを起動";
+    button.style.backgroundColor = "#007bff";
+    postureStatus.textContent = "姿勢を検出していません";
+    postureStatus.className = "no-detection";
+    angleInfo.textContent = "角度: -- °";
+    
+    goodPostureStartTime = null;
+    lastMessageMilestone = 0;
+    slouchStartTime = null;
+    goodPostureTimer.textContent = `良い姿勢: 00:00`;
+    motivationMessage.classList.remove('show');
+    
+    console.log("Camera stopped successfully");
+    updateScoreScreen();
+    showScreen(scoreScreen);
+    setTimeout(() => {
+        renderWeeklyChart();
+    }, 0);
+}
+
+/* =========================
+カメラ操作ボタン処理
+起動 / 停止の切り替え
+========================= */
+button.addEventListener('click', async () => {
+    button.disabled = true;
+    
+    if (isCameraRunning) {
+        stopCameraAndPose();
+    } else {
+        await startCameraAndPose();
+    }
+    
+    button.disabled = false;
+});
+
+/* =========================
+ページ離脱時の安全処理
+カメラを確実に停止
+========================= */
+window.addEventListener('beforeunload', () => {
+    if (isCameraRunning) {
+        stopCameraAndPose();
+    }
+});
+
+/* ============================================================
+ログインボタンが押されたときの処理
+============================================================ */
+if (loginButton) {
+    loginButton.addEventListener("click", () => {
+        const name = loginNameInput.value.trim();
+
+        // ユーザー名未入力チェック
+        if (!name) {
+            alert("ユーザー名を入力してください");
+            return;
+        }
+
+        // ユーザー名を保存（ログイン状態）
+        localStorage.setItem("loginUser", name);
+        
+        updateLoginUserName();
+
+        showScreen(settingScreen);
+        loginScreen.style.display="none";
+        settingScreen.style.display = "flex";
+
+        // Poseの設定を反映（感度など）
+        pose.setOptions({
+            modelComplexity: 1,
+            smoothLandmarks: true,
+            enableSegmentation: false,
+            minDetectionConfidence: DETECTION_CONFIDENCE,
+            minTrackingConfidence: DETECTION_CONFIDENCE,
+        });
+    });
+}
+
+/* ============================================================
+設定画面 → カメラ画面へ進むボタンが押されたとき
+============================================================ */
+if (toCameraFromSetting) {
+    toCameraFromSetting.addEventListener("click", () => {
+        settingScreen.style.display = "none";
+        cameraScreen.style.display = "flex";
+
+        pose.setOptions({
+            modelComplexity: 1,
+            smoothLandmarks: true,
+            enableSegmentation: false,
+            minDetectionConfidence: DETECTION_CONFIDENCE,
+            minTrackingConfidence: DETECTION_CONFIDENCE,
+        });
+    });
+}
+//表示更新用の関数
+function updateLoginUserName() {
+    const user = localStorage.getItem("loginUser");
+    document.querySelectorAll(".loginUserName").forEach(el => {
+        el.textContent = user ? user : "未ログイン";
+    });
+}
+
+/* ============================================================
+ログイン状態の判定（古い書き方）
+→ localStorage に loginUser があればログイン済み
+============================================================ */
+const savedUser = localStorage.getItem("loginUser");
+if (savedUser) {
+    loginScreen.style.display = "none";
+    cameraScreen.style.display = "flex";
+}
+
+/* ============================================================
+ログアウト処理
+============================================================ */
+function logout() {
+  // ログイン情報を削除
+  localStorage.removeItem("loginUser");
+　// 更新
+  updateLoginUserName();
+  // カメラが動いていたら停止
+  if (isCameraRunning) {
+    stopCameraAndPose();
+  }
+
+  // ログイン画面へ戻す
+  showScreen(loginScreen);
+}
+
+/* ============================================================
+ページ読み込み時（最初に1回だけ動く処理）
+ログイン状態によって最初の画面を決める
+============================================================ */
+window.addEventListener("load", () => {
+    updateLoginUserName();
+    const savedUser = localStorage.getItem("loginUser");
+
+    if (savedUser) {
+        showScreen(settingScreen); // ログイン済みなら設定画面へ
+    } else {
+        showScreen(loginScreen);   // 未ログインならログイン画面へ
+    }
+});

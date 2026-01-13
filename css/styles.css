@@ -1,0 +1,464 @@
+/* =========================
+ページ全体の基本設定
+アプリ共通のレイアウト・背景
+========================= */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: #f0e1f0;
+    margin: 0;
+}
+/* =========================
+アプリタイトル
+画面上部に表示される見出し
+========================= */
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+/* =========================
+スタート画面全体
+設定画面を中央に配置
+========================= */
+#settingScreen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    max-width: 600px;
+    width: 100%;
+}
+/* =========================
+設定カード
+スタート画面のメインUI
+========================= */
+.settings-container {
+    background-color: white;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+}
+/* =========================
+設定画面：見出し（h2）
+設定カード内のタイトル表示
+========================= */
+.settings-container h2 {
+    color: #333;
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 28px;
+}
+/* =========================
+設定項目（1ブロック）
+スライダー1項目ごとの間隔
+========================= */
+.setting-item {
+    margin-bottom: 25px;
+}
+/* =========================
+設定項目のラベル
+スライダーの説明文
+========================= */
+.setting-item label {
+    display: block;
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 10px;
+}
+/* =========================
+スライダー本体（共通）
+閾値・検出感度のバー
+========================= */
+.setting-item input[type="range"] {
+    width: 100%;
+    height: 8px;
+    border-radius: 5px;
+    background: #ddd;
+    outline: none;
+    cursor: pointer;
+}
+/* =========================
+スライダーのつまみ（Chrome / Edge）
+ユーザーが動かす丸い部分
+========================= */
+.setting-item input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #006eff;
+    cursor: pointer;
+}
+/* =========================
+スライダーのつまみ（Firefox用）
+Chrome以外のブラウザ対応
+========================= */
+.setting-item input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+}
+/* =========================
+スライダーの数値表示
+現在の設定値を強調表示
+========================= */
+.setting-value {
+    display: inline-block;
+    margin-left: 10px;
+    font-size: 18px;
+    color: #007bff;
+    font-weight: bold;
+}
+/* =========================
+スタートボタン
+カメラ画面へ進むメイン操作
+========================= */
+.start-button {
+    width: 100%;
+    padding: 15px 30px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+}
+/* =========================
+スタートボタン（ホバー時）
+押せることを視覚的に伝える
+========================= */
+.start-button:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+/* =========================
+カメラ画面全体
+スタート画面から切り替えて表示
+========================= */
+#cameraScreen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+}
+/* =========================
+映像描画用キャンバス
+カメラ映像と骨格描画を表示
+========================= */
+#canvas {
+    border: 3px solid #333;
+    border-radius: 8px;
+    background-color: #000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+/* =========================
+非表示の video 要素
+MediaPipe 用の入力元
+========================= */
+#cam {
+    display: none;
+}
+/* =========================
+カメラ開始 / 停止ボタン
+メイン操作ボタン
+========================= */
+#startStopButton {
+    margin-top: 20px;
+    padding: 12px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+/* =========================
+カメラボタン（ホバー時）
+押せることを視覚的に強調
+========================= */
+#startStopButton:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+/* =========================
+カメラボタン（クリック中）
+押し込まれた感を表現
+========================= */
+#startStopButton:active:not(:disabled) {
+    transform: translateY(0);
+}
+/* =========================
+カメラボタン（無効状態）
+操作できないことを視覚的に表現
+========================= */
+#startStopButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+/* =========================
+良い姿勢タイマー表示
+良い姿勢の累計時間を表示
+========================= */
+#goodPostureTimer {
+    margin-top: 20px;
+    margin-left: 20px;
+    padding: 12px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: inline-block;
+}
+/* =========================
+ボタン配置用コンテナ
+ボタンとタイマーを横並び
+========================= */
+.button-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+/* =========================
+姿勢ステータス表示
+良い姿勢 / 猫背 / 未検出 を表示
+========================= */
+#postureStatus {
+    margin-top: 20px;
+    padding: 20px 40px;
+    font-size: 24px;
+    font-weight: bold;
+    border-radius: 12px;
+    text-align: center;
+    min-width: 300px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+/* =========================
+良い姿勢の状態表示
+正しい姿勢が維持できているとき
+========================= */
+.good-posture {
+    background-color: #28a745;
+    color: white;
+}
+/* =========================
+猫背の状態表示
+注意を引くためアニメーション付き
+========================= */
+.bad-posture {
+    background-color: #dc3545;
+    color: white;
+    animation: pulse 1s infinite;
+}
+/* =========================
+姿勢未検出の状態表示
+カメラが認識していないとき
+========================= */
+.no-detection {
+    background-color: #6c757d;
+    color: white;
+}
+/* =========================
+猫背警告アニメーション
+視線を引き付けるための拡大縮小
+========================= */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+/* =========================
+姿勢角度の情報表示
+現在角度と判定基準を表示
+========================= */
+#angleInfo {
+    margin-top: 10px;
+    padding: 10px;
+    font-size: 14px;
+    color: #666;
+    background-color: white;
+    border-radius: 8px;
+    min-width: 300px;
+    text-align: center;
+}
+/* =========================
+戻るボタン
+カメラ画面 → 設定画面へ戻る
+========================= */
+#backButton {
+    margin-top: 20px;
+    padding: 10px 25px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+/* =========================
+戻るボタン（ホバー時）
+操作可能であることを強調
+========================= */
+#backButton:hover {
+    background-color: #5a6268;
+}
+
+/* =========================
+モチベーションメッセージ
+右上にスライド表示される通知
+========================= */
+#motivationMessage {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    font-size: 18px;
+    font-weight: bold;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transform: translateX(400px);
+    transition: all 0.5s ease;
+    z-index: 1000;
+    max-width: 300px;
+    text-align: center;
+}
+/* =========================
+メッセージ表示状態
+JSでクラスを付与して表示
+========================= */
+#motivationMessage.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+/* =========================
+達成時の演出アニメーション
+メッセージを揺らして強調
+========================= */
+#motivationMessage.celebrate {
+    animation: celebrate 0.6s ease;
+}
+/* =========================
+リセット時の警告表示
+猫背が続いた場合の演出
+========================= */
+#motivationMessage.reset {
+    background: linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100%);
+}
+/* =========================
+達成メッセージ用アニメーション
+左右に揺らして達成感を演出
+========================= */
+@keyframes celebrate {
+    0%, 100% {
+        transform: translateX(0) scale(1);
+    }
+    25% {
+        transform: translateX(-10px) scale(1.1);
+    }
+    75% {
+        transform: translateX(10px) scale(1.1);
+    }
+}
+/**/
+#loginScreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+/* =========================
+スコア画面 全体
+========================= */
+#scoreScreen {
+  display: none;
+  min-height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+
+/* =========================
+スコアカード
+========================= */
+.score-card {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+/* タイトル */
+.score-title {
+  margin-bottom: 30px;
+  font-size: 26px;
+}
+
+/* 時間表示 */
+.score-times {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 25px;
+  font-size: 16px;
+}
+
+/* スコアの数字 */
+.score-main {
+  font-size: 64px;
+  font-weight: bold;
+  color: #28a745;
+  margin-bottom: 10px;
+}
+/* スコアの点数 */
+.score-unit {
+  font-size: 24px;
+  margin-left: 5px;
+}
+
+/* コメント */
+.score-message {
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+/**/
+.login-user {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 10px;
+}
+/**/
+.login-user span {
+  font-weight: bold;
+  color: #007bff;
+}
