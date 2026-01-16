@@ -519,3 +519,19 @@ JSでクラスを付与して表示
 #settingScreen .start-button[onclick="logout()"]:hover {
   background-color: #c82333;
 }
+/* 背景 */
+body {
+    margin: 0;
+    min-height: 100vh;
+
+    /* 背景画像 */
+    background-image: url("https://chat.google.com/u/0/api/get_attachment_url?url_type=FIFE_URL&content_type=image%2Fjpeg&attachment_token=AOo0EEVOAIeyII53eoTquKfc%2BIxtAOhdlGAFANwjjuHOpEokt1Irerexihc0gyFFmVw10jd9l%2Bysguo4w9MBIZHujOn4YKRw4hngz9iZ84Kd%2FrWOiKma6D35fw2ZZD7IP5IAzmJdRAeQCh0Ex2GOZyFw0iPFooD6n1aAhRVmh6rMgfkbQJVV%2B8HXxygZJi2mX2z43QQEHgNEzXNQlIkh9uA1AohGvVXH9WGyWD73dAO9g3xDkqm%2FKGg6d8cmnzk2F%2FmzyV2b8ADGs6Seo0TcQ7UKEtt2MbdNphsTVzsCq%2FOvarfFqc8Vk1jFhnxAi430V3WF21o3%2BI%2F%2FInkohadEe5DJhogNbypavmPSRY12MEafr8oO4WEZqkLt4gx%2FGfpAn9zV5Rw1CqQwUgdGcpJlddaQx6%2BUcIP4NJ%2FaIlje7S5tSMvjRh7NZMrLodYIuvgVAIiJ6Fbp6g41k5oJB5e3TJu3oYWiWwQYBx7XDgBGOA11FHUHZYiBy77QEb4Nc7ssVbSi%2FWQETA%2BVtDV5LIoVW0rY1qO%2FnIVauZxaD27%2BFUe62m8PEEFmfl5%2F32kYjRYTEYZWzYuGsObvRYeIbGtj1j7JkhEWNqjd43iKTMZFAEl5qbop8TlS9hzIvIpmUh%2FfTQp%2Fgg%3D%3D&allow_caching=true&sz=w512"); /* パスは調整 */
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+
+    /* 中央寄せ */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
