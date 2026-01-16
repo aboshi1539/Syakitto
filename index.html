@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ja">
+        <!-- タイトル -->
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>シャキッと先生の姿勢ラボ</title>
+        <!-- css -->
+        <link rel="stylesheet" href="../css/styles.css">
+    </head>
+    <body>
+        <!-- ログイン画面だよ -->
+    <div id="loginScreen">
+        <div class="settings-container">
+            <h2>シャキッと先生の姿勢ラボ</h2>
+            
+            <!-- Google認証用ボタン（入力フォームは不要） -->
+            <button id="loginButton" class="start-button">
+                🔐 Googleでログイン
+            </button>
+            
+            <p style="font-size: 14px; color: #666; margin-top: 15px;">
+                ※ Googleアカウントで安全にログインできます
+            </p>
+        </div>
+    </div>
+
+        <!-- 設定画面 -->
+        <div id="settingScreen">
+            <h1>シャキッと先生の姿勢ラボ</h1>
+            
+            <div class="settings-container">
+                <h2><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg>
+                設定</h2>
+
+                <div class="setting-item">
+                    <label for="thresholdSlider">
+                        猫背判定の閾値: <span class="setting-value" id="thresholdValue">165</span>度
+                    </label>
+                    <input type="range" id="thresholdSlider" min="150" max="180" value="165" step="1">
+                    <p style="font-size: 12px; color: #666; margin-top: 5px;">
+                        ※ 値が大きいほど厳しい判定になります！
+                        ( 先生のオススメは165度 )
+                    </p>
+                </div>
+
+                <div class="setting-item">
+                    <label for="sensitivitySlider">
+                        検出感度: <span class="setting-value" id="sensitivityValue">0.5</span>
+                    </label>
+                    <input type="range" id="sensitivitySlider" min="0.3" max="0.9" value="0.5" step="0.1">
+                    <p style="font-size: 12px; color: #666; margin-top: 5px;">
+                        ※ 値が大きいほど検出精度が高くなります！
+                        ( 先生のオススメは0.5 )
+                    </p>
+                </div>
+                
+                <button id="toCameraFromSetting" class="start-button">カメラ画面へ</button>
+            </div>
+            
+            <div id="loginUserDisplay" class="login-user">
+                👤 ログイン中：<span class="loginUserName">---</span>
+            </div>
+            
+            <button class="start-button" style="background:#dc3545" onclick="logout()">
+                ログアウト
+            </button>
+        </div>
+
+        <!-- カメラ画面 -->
+        <div id="cameraScreen">
+            <h1>シャキッと先生の姿勢ラボ</h1>
+            <div id="motivationMessage"></div>
+            <video id="cam"></video>
+            <canvas id="canvas" width="640" height="480"></canvas>
+            <div class="button-container">
+                <button id="startStopButton">カメラを起動</button>
+                <div id="goodPostureTimer">良い姿勢: 00:00</div>
+            </div>
+            <div id="postureStatus" class="no-detection">姿勢を検出していません</div>
+            <div id="angleInfo">角度: -- °</div>
+            <button id="backButton">
+                <svg xmlns="http://www.w3.org/2000/svg" height="15px" viewBox="0 -960 960 960" width="24px" fill="blue"><path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z"/></svg>
+                設定画面に戻る
+            </button>
+        </div>
+
+        <!-- スコア画面 -->
+        <div id="scoreScreen">
+            <div class="score-card">
+                <h1 class="score-title">📊 姿勢スコア結果</h1>
+
+                <div class="score-times">
+                    <p>良い姿勢：<span id="goodTime">00:03</span></p>
+                    <p>悪い姿勢：<span id="badTime">00:00</span></p>
+                </div>
+
+                <div class="score-main">
+                    <span id="scoreValue">100</span>
+                    <span class="score-unit">点</span>
+                </div>
+
+                <p id="scoreMessage" class="score-message">
+                    ✨ 素晴らしい姿勢です！
+                </p>
+
+                <section id="weeklyScoreSection">
+                    <h2>📊 週間姿勢スコア（<span class="loginUserName"></span>）</h2>
+                    <canvas id="weeklyChart" width="600" height="300"></canvas>
+                </section>
+
+                <button id="backToSettingButton" class="start-button">
+                    設定画面に戻る
+                </button>
+            </div>
+        </div>
+
+        <!-- MediaPipe関連のライブラリ -->
+        <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        
+        <!-- 🔥 Firebase SDK (最新モジュール版) 🔥 -->
+        <script type="module">
+            import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+            import { 
+                getAuth, 
+                GoogleAuthProvider, 
+                signInWithPopup, 
+                signOut, 
+                onAuthStateChanged 
+            } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+            // Firebase設定
+            const firebaseConfig = {
+                apiKey: "AIzaSyC-iwJGuHXc-sTJVBuH3TdVSukw_xhTIrk",
+                authDomain: "g03003.firebaseapp.com",
+                projectId: "g03003",
+                storageBucket: "g03003.firebasestorage.app",
+                messagingSenderId: "873687986818",
+                appId: "1:873687986818:web:dfb6483e0f3ce3a594fa9b"
+            };
+
+            // Firebase初期化
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const provider = new GoogleAuthProvider();
+
+            // グローバルに公開（main.jsから使えるように）
+            window.firebaseAuth = auth;
+            window.googleProvider = provider;
+            window.firebaseSignInWithPopup = signInWithPopup;
+            window.firebaseSignOut = signOut;
+            window.firebaseOnAuthStateChanged = onAuthStateChanged;
+
+            console.log("✅ Firebase初期化完了");
+        </script>
+
+        <!-- js（type="module"に変更不要・上記でグローバル公開しているため） -->
+        <script src="../js/main.js" defer></script>
+    </body>
+</html>
