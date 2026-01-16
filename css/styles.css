@@ -387,13 +387,51 @@ JSでクラスを付与して表示
         transform: translateX(10px) scale(1.1);
     }
 }
-/**/
+
+/* =========================
+🔥 ログイン画面全体（Firebase対応）
+========================= */
 #loginScreen {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
+}
+
+/* =========================
+🔥 Googleログインボタン専用スタイル
+========================= */
+#loginButton {
+    /* 基本スタイルは .start-button を継承 */
+    background: linear-gradient(135deg, #4285f4 0%, #34a853 50%, #fbbc05 75%, #ea4335 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+    font-size: 18px;
+    padding: 16px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Googleカラーのグラデーションアニメーション */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ログインボタンホバー時 */
+#loginButton:hover {
+    background: linear-gradient(135deg, #357ae8 0%, #2d8e47 50%, #f0b800 75%, #d93025 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(66, 133, 244, 0.4);
+}
+
+/* ログインボタン押下時 */
+#loginButton:active {
+    transform: translateY(-1px);
 }
 
 /* =========================
@@ -451,14 +489,33 @@ JSでクラスを付与して表示
   font-size: 18px;
   margin-bottom: 30px;
 }
-/**/
+
+/* =========================
+ログインユーザー表示
+========================= */
 .login-user {
   font-size: 14px;
   color: #555;
   margin-bottom: 10px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #007bff;
 }
-/**/
+
 .login-user span {
   font-weight: bold;
   color: #007bff;
+}
+
+/* =========================
+ログアウトボタンのスタイル調整
+========================= */
+#settingScreen .start-button[onclick="logout()"] {
+  background-color: #dc3545;
+  margin-top: 15px;
+}
+
+#settingScreen .start-button[onclick="logout()"]:hover {
+  background-color: #c82333;
 }
