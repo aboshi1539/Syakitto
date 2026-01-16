@@ -53,12 +53,12 @@ let DETECTION_CONFIDENCE = 0.5;
 
 // 画面切り替え（必ず先に定義）
 function showScreen(screen) {
-  const screens = ["loginScreen", "settingScreen", "cameraScreen", "scoreScreen"];
-  screens.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = "none";
-  });
-  if (screen) screen.style.display = "flex";
+    const screens = ["loginScreen", "settingScreen", "cameraScreen", "scoreScreen"];
+    screens.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = "none";
+    });
+    if (screen) screen.style.display = "flex";
 }
 
 // 現在時刻を取得する関数
@@ -206,17 +206,17 @@ const motivationMessages = [
     { time: 300000, message: "🌈 5分達成！驚異的です！" },
     { time: 600000, message: "⭐ 10分達成！プロフェッショナル！" },
     { time: 1800000, message: "🎯 30分達成！伝説的です！" },
-    { time: 3000000, message: "😶 50分達成！もはや怖い！怖すぎます！逃げろー！！"}
+    { time: 3000000, message: "😶 50分達成！もはや怖い！怖すぎます！逃げろー！！" }
 ];
 
 /* =========================
 ミリ秒(ms) → "mm:ss" に変換
 ========================= */
 function formatTimeMMSS(ms) {
-  const totalSeconds = Math.floor(ms / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
 /* =========================
@@ -230,13 +230,16 @@ function showMotivationMessage(totalTime) {
         if (totalTime >= milestone.time && lastMessageMilestone < milestone.time) {
             lastMessageMilestone = milestone.time;
             motivationMessage.textContent = milestone.message;
-            motivationMessage.classList.remove('reset');
-            motivationMessage.classList.add('show', 'celebrate');
+            // modify colors back to default (blue) just in case
+            motivationMessage.classList.remove('from-[#ff6b6b]', 'to-[#c92a2a]');
+            motivationMessage.classList.add('from-[#667eea]', 'to-[#764ba2]');
+
+            motivationMessage.classList.add('opacity-100', 'translate-x-0', 'animate-celebrate');
             setTimeout(() => {
-                motivationMessage.classList.remove('show');
+                motivationMessage.classList.remove('opacity-100', 'translate-x-0');
             }, 3000);
             setTimeout(() => {
-                motivationMessage.classList.remove('celebrate');
+                motivationMessage.classList.remove('animate-celebrate');
             }, 600);
             break;
         }
@@ -262,12 +265,18 @@ function getCurrentUser() {
 ========================= */
 function showResetMessage() {
     motivationMessage.textContent = "💥 猫背5秒経過！記録リセット！";
-    motivationMessage.classList.add('reset', 'show', 'celebrate');
+    // Change to red gradient and show
+    motivationMessage.classList.remove('from-[#667eea]', 'to-[#764ba2]');
+    motivationMessage.classList.add('from-[#ff6b6b]', 'to-[#c92a2a]', 'opacity-100', 'translate-x-0', 'animate-celebrate');
+
     setTimeout(() => {
-        motivationMessage.classList.remove('show');
+        motivationMessage.classList.remove('opacity-100', 'translate-x-0');
     }, 3000);
     setTimeout(() => {
-        motivationMessage.classList.remove('celebrate', 'reset');
+        motivationMessage.classList.remove('animate-celebrate');
+        // Revert colors
+        motivationMessage.classList.remove('from-[#ff6b6b]', 'to-[#c92a2a]');
+        motivationMessage.classList.add('from-[#667eea]', 'to-[#764ba2]');
     }, 600);
 }
 
@@ -329,7 +338,7 @@ pointB を頂点とした角度を算出
 ========================= */
 function calculateAngle(pointA, pointB, pointC) {
     const radians = Math.atan2(pointC.y - pointB.y, pointC.x - pointB.x) -
-                    Math.atan2(pointA.y - pointB.y, pointA.x - pointB.x);
+        Math.atan2(pointA.y - pointB.y, pointA.x - pointB.x);
     let angle = Math.abs(radians * 180.0 / Math.PI);
     if (angle > 180.0) {
         angle = 360 - angle;
@@ -430,10 +439,12 @@ pose.onResults((results) => {
 
         if (isSlouching) {
             postureStatus.textContent = "⚠️ 猫背を検知しました！";
-            postureStatus.className = "bad-posture";
+            postureStatus.classList.remove("bg-[#6c757d]", "bg-[#28a745]", "bg-[#dc3545]", "animate-pulse-scale");
+            postureStatus.classList.add("bg-[#dc3545]", "animate-pulse-scale"); // Red
         } else {
             postureStatus.textContent = "✅ 良い姿勢です";
-            postureStatus.className = "good-posture";
+            postureStatus.classList.remove("bg-[#6c757d]", "bg-[#28a745]", "bg-[#dc3545]", "animate-pulse-scale");
+            postureStatus.classList.add("bg-[#28a745]"); // Green
         }
 
         angleInfo.textContent = `角度: ${angle}° (基準: ${SLOUCH_THRESHOLD}°)`;
@@ -449,7 +460,8 @@ pose.onResults((results) => {
         lastPostureState = isSlouching;
     } else {
         postureStatus.textContent = "姿勢を検出していません";
-        postureStatus.className = "no-detection";
+        postureStatus.classList.remove("bg-[#6c757d]", "bg-[#28a745]", "bg-[#dc3545]", "animate-pulse-scale");
+        postureStatus.classList.add("bg-[#6c757d]"); // Gray
         angleInfo.textContent = "角度: -- °";
         lastPostureState = null;
         slouchStartTime = null;
@@ -523,7 +535,8 @@ async function startCameraAndPose() {
         await camera.start();
         isCameraRunning = true;
         button.textContent = "カメラを停止";
-        button.style.backgroundColor = "#dc3545";
+        button.classList.remove('bg-[#007bff]');
+        button.classList.add('bg-[#dc3545]');
         console.log("Camera started successfully");
     } catch (error) {
         console.error("Camera start error:", error);
@@ -565,20 +578,22 @@ function stopCameraAndPose() {
         addPostureLog("bad", elapsedBad);
         badPostureStartTime = null;
     }
-    
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     camera = null;
     button.textContent = "カメラを起動";
-    button.style.backgroundColor = "#007bff";
+    button.classList.remove('bg-[#dc3545]');
+    button.classList.add('bg-[#007bff]');
     postureStatus.textContent = "姿勢を検出していません";
-    postureStatus.className = "no-detection";
+    postureStatus.classList.remove("bg-[#6c757d]", "bg-[#28a745]", "bg-[#dc3545]", "animate-pulse-scale");
+    postureStatus.classList.add("bg-[#6c757d]");
     angleInfo.textContent = "角度: -- °";
     goodPostureStartTime = null;
     lastMessageMilestone = 0;
     slouchStartTime = null;
     goodPostureTimer.textContent = `良い姿勢: 00:00`;
-    motivationMessage.classList.remove('show');
-    
+    motivationMessage.classList.remove('opacity-100', 'translate-x-0');
+
     console.log("Camera stopped successfully");
     updateScoreScreen();
     showScreen(scoreScreen);
@@ -609,7 +624,7 @@ if (loginButton) {
         try {
             // HTMLで読み込んだFirebase関数を使用
             const result = await window.firebaseSignInWithPopup(
-                window.firebaseAuth, 
+                window.firebaseAuth,
                 window.googleProvider
             );
             const user = result.user;
@@ -666,18 +681,18 @@ function updateLoginUserName() {
 async function logout() {
     try {
         await window.firebaseSignOut(window.firebaseAuth);
-        
+
         localStorage.removeItem("loginUser");
         localStorage.removeItem("firebaseUID");
-        
+
         console.log("✅ ログアウト成功");
-        
+
         updateLoginUserName();
-        
+
         if (isCameraRunning) {
             stopCameraAndPose();
         }
-        
+
         showScreen(loginScreen);
     } catch (error) {
         console.error("❌ ログアウトエラー:", error);
@@ -690,7 +705,7 @@ async function logout() {
 ============================================================ */
 window.addEventListener("load", () => {
     updateLoginUserName();
-    
+
     // Firebaseの認証状態を監視
     window.firebaseOnAuthStateChanged(window.firebaseAuth, (user) => {
         if (user) {
@@ -698,9 +713,9 @@ window.addEventListener("load", () => {
             localStorage.setItem("loginUser", user.displayName || user.email);
             localStorage.setItem("firebaseUID", user.uid);
             updateLoginUserName();
-            
+
             console.log("✅ 認証状態: ログイン中", user.displayName);
-            
+
             // ログイン画面が表示されている場合のみ設定画面へ
             if (loginScreen.style.display !== "none") {
                 showScreen(settingScreen);
@@ -710,7 +725,7 @@ window.addEventListener("load", () => {
             localStorage.removeItem("loginUser");
             localStorage.removeItem("firebaseUID");
             updateLoginUserName();
-            
+
             console.log("⚠️ 認証状態: 未ログイン");
             showScreen(loginScreen);
         }
