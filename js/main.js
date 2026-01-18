@@ -628,6 +628,17 @@ if (loginButton) {
                 window.googleProvider
             );
             const user = result.user;
+            // 🔥 Firestore にユーザー情報を保存
+await window.firestoreSetDoc(
+    window.firestoreDoc(window.firestoreDB, "users", user.uid),
+    {
+        name: user.displayName || "",
+        email: user.email || "",
+        lastLogin: new Date()
+    },
+    { merge: true }
+);
+
 
             // ユーザー情報を保存
             localStorage.setItem("loginUser", user.displayName || user.email);

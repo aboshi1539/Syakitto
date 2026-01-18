@@ -537,6 +537,7 @@ body {
     justify-content: center;
     align-items: center;
 }
+<<<<<<< HEAD
 /* =========================================================
    Custom Animations for Posture App (姿勢ラボ)
    ---------------------------------------------------------
@@ -634,3 +635,5 @@ body {
     background-size: 200% 200%;
     animation: gradientShift 3s ease infinite;
 }
+=======
+>>>>>>> 4240dfef605890799256facba0cc592247610867
