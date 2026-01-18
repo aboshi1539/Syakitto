@@ -153,39 +153,43 @@
         
         <!-- 🔥 Firebase SDK (最新モジュール版) 🔥 -->
         <script type="module">
-            import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-            import { 
-                getAuth, 
-                GoogleAuthProvider, 
-                signInWithPopup, 
-                signOut, 
-                onAuthStateChanged 
-            } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-            // Firebase設定
-            const firebaseConfig = {
-                apiKey: "AIzaSyC-iwJGuHXc-sTJVBuH3TdVSukw_xhTIrk",
-                authDomain: "g03003.firebaseapp.com",
-                projectId: "g03003",
-                storageBucket: "g03003.firebasestorage.app",
-                messagingSenderId: "873687986818",
-                appId: "1:873687986818:web:dfb6483e0f3ce3a594fa9b"
-            };
+  // 🔽 Firestore を追加
+  import { getFirestore, doc, setDoc }
+    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-            // Firebase初期化
-            const app = initializeApp(firebaseConfig);
-            const auth = getAuth(app);
-            const provider = new GoogleAuthProvider();
+  const firebaseConfig = {
+    apiKey: "...",
+    authDomain: "...",
+    projectId: "...",
+    storageBucket: "...",
+    messagingSenderId: "...",
+    appId: "..."
+  };
 
-            // グローバルに公開（main.jsから使えるように）
-            window.firebaseAuth = auth;
-            window.googleProvider = provider;
-            window.firebaseSignInWithPopup = signInWithPopup;
-            window.firebaseSignOut = signOut;
-            window.firebaseOnAuthStateChanged = onAuthStateChanged;
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
 
-            console.log("✅ Firebase初期化完了");
-        </script>
+  // 🔽 Firestore 初期化
+  const db = getFirestore(app);
+
+  // window に公開（←これが超重要）
+  window.firebaseAuth = auth;
+  window.googleProvider = provider;
+  window.firebaseSignInWithPopup = signInWithPopup;
+  window.firebaseSignOut = signOut;
+  window.firebaseOnAuthStateChanged = onAuthStateChanged;
+
+  // 🔽 Firestore 関連も公開
+  window.firestoreDB = db;
+  window.firestoreSetDoc = setDoc;
+  window.firestoreDoc = doc;
+</script>
+
 
         <!-- js（type="module"に変更不要・上記でグローバル公開しているため） -->
         <script src="./js/main.js" defer></script>
