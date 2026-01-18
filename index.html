@@ -26,8 +26,13 @@
             }
             
             /* 設定画面 */
+            #settingScreen {
+                max-width: 100%;
+            }
+            
             .settings-container {
                 padding: 20px;
+                max-width: 100%;
             }
             
             .settings-container h2 {
@@ -51,6 +56,7 @@
             /* カメラ画面 */
             #canvas {
                 max-width: 100%;
+                width: 100%;
                 height: auto;
                 border-width: 2px;
             }
@@ -58,6 +64,7 @@
             .button-container {
                 flex-direction: column;
                 gap: 12px;
+                width: 100%;
             }
             
             #startStopButton,
@@ -73,12 +80,14 @@
                 padding: 15px 25px;
                 min-width: auto;
                 width: 100%;
+                max-width: 100%;
             }
             
             #angleInfo {
                 font-size: 12px;
                 min-width: auto;
                 width: 100%;
+                max-width: 100%;
             }
             
             #backButton {
@@ -99,6 +108,7 @@
             /* スコア画面 */
             .score-card {
                 padding: 25px;
+                max-width: 100%;
             }
             
             .score-title {
@@ -131,6 +141,10 @@
             #weeklyChart {
                 max-width: 100%;
             }
+            
+            #loginScreen .settings-container {
+                max-width: 100%;
+            }
         }
         
         /* タブレット対応 (768px〜1023px) */
@@ -161,25 +175,55 @@
             }
         }
         
-        /* PC対応 (1024px〜) */
-        @media (min-width: 1024px) {
-            /* 元のCSSがそのまま適用される */
-        }
-        
         /* Canvas レスポンシブ */
         #canvas {
             display: block;
             margin: 0 auto;
         }
     </style>
+    
+    <!-- Firebase SDK を先に読み込み -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { 
+            getAuth, 
+            GoogleAuthProvider, 
+            signInWithPopup, 
+            signOut, 
+            onAuthStateChanged 
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-iwJGuHXc-sTJVBuH3TdVSukw_xhTIrk",
+            authDomain: "g03003.firebaseapp.com",
+            projectId: "g03003",
+            storageBucket: "g03003.firebasestorage.app",
+            messagingSenderId: "873687986818",
+            appId: "1:873687986818:web:dfb6483e0f3ce3a594fa9b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // グローバルに公開
+        window.firebaseAuth = auth;
+        window.googleProvider = provider;
+        window.firebaseSignInWithPopup = signInWithPopup;
+        window.firebaseSignOut = signOut;
+        window.firebaseOnAuthStateChanged = onAuthStateChanged;
+
+        console.log("✅ Firebase初期化完了");
+    </script>
 </head>
 <body>
     
-    <!-- ログイン画面 -->
-    <div id="loginScreen" style="display: flex;">
+    <!-- ログイン画面だよ -->
+    <div id="loginScreen" style="display: none;">
         <div class="settings-container">
             <h2>シャキッと先生の姿勢ラボ</h2>
             
+            <!-- Google認証用ボタン（入力フォームは不要） -->
             <button id="loginButton" class="start-button" style="background: linear-gradient(135deg, #4285f4 0%, #34a853 50%, #fbbc05 75%, #ea4335 100%); background-size: 200% 200%; animation: gradientShift 3s ease infinite; display: flex; align-items: center; justify-content: center; gap: 10px;">
                 🔐 Googleでログイン
             </button>
@@ -191,7 +235,7 @@
     </div>
 
     <!-- 設定画面 -->
-    <div id="settingScreen">
+    <div id="settingScreen" style="display: none;">
         <h1>シャキッと先生の姿勢ラボ</h1>
         
         <div class="settings-container">
@@ -206,7 +250,8 @@
                 </label>
                 <input type="range" id="thresholdSlider" min="150" max="180" value="165" step="1">
                 <p style="font-size: 12px; color: #666; margin-top: 5px;">
-                    ※ 値が大きいほど厳しい判定になります！( 先生のオススメは165度 )
+                    ※ 値が大きいほど厳しい判定になります！
+                    ( 先生のオススメは165度 )
                 </p>
             </div>
 
@@ -216,15 +261,16 @@
                 </label>
                 <input type="range" id="sensitivitySlider" min="0.3" max="0.9" value="0.5" step="0.1">
                 <p style="font-size: 12px; color: #666; margin-top: 5px;">
-                    ※ 値が大きいほど検出精度が高くなります！( 先生のオススメは0.5 )
+                    ※ 値が大きいほど検出精度が高くなります！
+                    ( 先生のオススメは0.5 )
                 </p>
             </div>
             
             <button id="toCameraFromSetting" class="start-button">カメラ画面へ</button>
         </div>
         
-        <div class="login-user">
-            👤 ログイン中：<span class="loginUserName">---</span>
+        <div id="loginUserDisplay" class="login-user">
+            👤 ログイン中：<span class="font-bold text-[#007bff] loginUserName">---</span>
         </div>
         
         <button class="start-button" onclick="logout()" style="background-color: #dc3545; margin-top: 15px;">
@@ -233,7 +279,7 @@
     </div>
 
     <!-- カメラ画面 -->
-    <div id="cameraScreen">
+    <div id="cameraScreen" style="display: none;">
         <h1>シャキッと先生の姿勢ラボ</h1>
         <div id="motivationMessage"></div>
         <video id="cam"></video>
@@ -251,13 +297,13 @@
     </div>
 
     <!-- スコア画面 -->
-    <div id="scoreScreen">
+    <div id="scoreScreen" style="display: none;">
         <div class="score-card">
             <h1 class="score-title">📊 姿勢スコア結果</h1>
 
             <div class="score-times">
-                <p>良い姿勢：<span id="goodTime">00:03</span></p>
-                <p>悪い姿勢：<span id="badTime">00:00</span></p>
+                <p>良い姿勢：<span id="goodTime" class="font-bold">00:03</span></p>
+                <p>悪い姿勢：<span id="badTime" class="font-bold">00:00</span></p>
             </div>
 
             <div class="score-main">
@@ -285,41 +331,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { 
-            getAuth, 
-            GoogleAuthProvider, 
-            signInWithPopup, 
-            signOut, 
-            onAuthStateChanged 
-        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyC-iwJGuHXc-sTJVBuH3TdVSukw_xhTIrk",
-            authDomain: "g03003.firebaseapp.com",
-            projectId: "g03003",
-            storageBucket: "g03003.firebasestorage.app",
-            messagingSenderId: "873687986818",
-            appId: "1:873687986818:web:dfb6483e0f3ce3a594fa9b"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
-
-        window.firebaseAuth = auth;
-        window.googleProvider = provider;
-        window.firebaseSignInWithPopup = signInWithPopup;
-        window.firebaseSignOut = signOut;
-        window.firebaseOnAuthStateChanged = onAuthStateChanged;
-
-        console.log("✅ Firebase初期化完了");
-    </script>
-
-    <!-- main.js（deferで最後に読み込み） -->
-    <script src="./js/main.js" defer></script>
+    <!-- js（元のmain.jsを読み込み） -->
+    <script src="./js/main.js"></script>
 </body>
 </html>
