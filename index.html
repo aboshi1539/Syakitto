@@ -1,338 +1,193 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>シャキッと先生の姿勢ラボ</title>
-    
-    <!-- 元のCSSファイルを読み込み -->
-    <link rel="stylesheet" href="css/styles.css">
-    
-    <!-- レスポンシブ対応の追加CSS -->
-    <style>
-        /* =========================
-        レスポンシブ対応の追加スタイル
-        ========================= */
+    <!-- タイトル -->
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>シャキッと先生の姿勢ラボ</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+            /* Custom Keyframes that are too complex for inline arbitrary values or involve specific transforms */
+            @keyframes pulse-scale {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+            }
+            @keyframes celebrate {
+                0%, 100% { transform: translateX(0) scale(1); }
+                25% { transform: translateX(-10px) scale(1.1); }
+                75% { transform: translateX(10px) scale(1.1); }
+            }
+            @keyframes gradientShift {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+            }
+            .animate-pulse-scale {
+                animation: pulse-scale 1s infinite;
+            }
+            .animate-celebrate {
+                animation: celebrate 0.6s ease;
+            }
+            .animate-gradient-shift {
+                background-size: 200% 200%;
+                animation: gradientShift 3s ease infinite;
+            }
+        </style>
+        <!-- css/styles.css removed -->
+    </head>
+    <body class="min-h-screen flex flex-col items-center justify-center p-5 font-sans bg-[#f0e1f0] bg-cover bg-center bg-no-repeat m-0" style="background-image: url('https://chat.google.com/u/0/api/get_attachment_url?url_type=FIFE_URL&content_type=image%2Fjpeg&attachment_token=AOo0EEVOAIeyII53eoTquKfc%2BIxtAOhdlGAFANwjjuHOpEokt1Irerexihc0gyFFmVw10jd9l%2Bysguo4w9MBIZHujOn4YKRw4hngz9iZ84Kd%2FrWOiKma6D35fw2ZZD7IP5IAzmJdRAeQCh0Ex2GOZyFw0iPFooD6n1aAhRVmh6rMgfkbQJVV%2B8HXxygZJi2mX2z43QQEHgNEzXNQlIkh9uA1AohGvVXH9WGyWD73dAO9g3xDkqm%2FKGg6d8cmnzk2F%2FmzyV2b8ADGs6Seo0TcQ7UKEtt2MbdNphsTVzsCq%2FOvarfFqc8Vk1jFhnxAi430V3WF21o3%2BI%2F%2FInkohadEe5DJhogNbypavmPSRY12MEafr8oO4WEZqkLt4gx%2FGfpAn9zV5Rw1CqQwUgdGcpJlddaQx6%2BUcIP4NJ%2FaIlje7S5tSMvjRh7NZMrLodYIuvgVAIiJ6Fbp6g41k5oJB5e3TJu3oYWiWwQYBx7XDgBGOA11FHUHZYiBy77QEb4Nc7ssVbSi%2FWQETA%2BVtDV5LIoVW0rY1qO%2FnIVauZxaD27%2BFUe62m8PEEFmfl5%2F32kYjRYTEYZWzYuGsObvRYeIbGtj1j7JkhEWNqjd43iKTMZFAEl5qbop8TlS9hzIvIpmUh%2FfTQp%2Fgg%3D%3D&allow_caching=true&sz=w512');">
         
-        /* スマホ対応 (〜767px) */
-        @media (max-width: 767px) {
-            body {
-                padding: 12px;
-            }
-            
-            h1 {
-                font-size: 1.5em;
-                margin-bottom: 15px;
-            }
-            
-            /* 設定画面 */
-            #settingScreen {
-                max-width: 100%;
-            }
-            
-            .settings-container {
-                padding: 20px;
-                max-width: 100%;
-            }
-            
-            .settings-container h2 {
-                font-size: 22px;
-                margin-bottom: 20px;
-            }
-            
-            .setting-item label {
-                font-size: 14px;
-            }
-            
-            .setting-value {
-                font-size: 16px;
-            }
-            
-            .start-button {
-                font-size: 16px;
-                padding: 12px 20px;
-            }
-            
-            /* カメラ画面 */
-            #canvas {
-                max-width: 100%;
-                width: 100%;
-                height: auto;
-                border-width: 2px;
-            }
-            
-            .button-container {
-                flex-direction: column;
-                gap: 12px;
-                width: 100%;
-            }
-            
-            #startStopButton,
-            #goodPostureTimer {
-                margin: 0;
-                width: 100%;
-                font-size: 16px;
-                padding: 10px 20px;
-            }
-            
-            #postureStatus {
-                font-size: 18px;
-                padding: 15px 25px;
-                min-width: auto;
-                width: 100%;
-                max-width: 100%;
-            }
-            
-            #angleInfo {
-                font-size: 12px;
-                min-width: auto;
-                width: 100%;
-                max-width: 100%;
-            }
-            
-            #backButton {
-                font-size: 14px;
-                padding: 8px 20px;
-            }
-            
-            /* モチベーションメッセージ */
-            #motivationMessage {
-                top: 10px;
-                right: 10px;
-                left: 10px;
-                max-width: calc(100% - 20px);
-                font-size: 14px;
-                padding: 10px 15px;
-            }
-            
-            /* スコア画面 */
-            .score-card {
-                padding: 25px;
-                max-width: 100%;
-            }
-            
-            .score-title {
-                font-size: 20px;
-                margin-bottom: 20px;
-            }
-            
-            .score-times {
-                flex-direction: column;
-                gap: 8px;
-                font-size: 14px;
-            }
-            
-            .score-main {
-                font-size: 48px;
-            }
-            
-            .score-unit {
-                font-size: 20px;
-            }
-            
-            .score-message {
-                font-size: 16px;
-            }
-            
-            #weeklyScoreSection h2 {
-                font-size: 16px;
-            }
-            
-            #weeklyChart {
-                max-width: 100%;
-            }
-            
-            #loginScreen .settings-container {
-                max-width: 100%;
-            }
-        }
-        
-        /* タブレット対応 (768px〜1023px) */
-        @media (min-width: 768px) and (max-width: 1023px) {
-            body {
-                padding: 15px;
-            }
-            
-            h1 {
-                font-size: 1.8em;
-            }
-            
-            .settings-container {
-                padding: 30px;
-            }
-            
-            .settings-container h2 {
-                font-size: 26px;
-            }
-            
-            #canvas {
-                max-width: 90%;
-                height: auto;
-            }
-            
-            #motivationMessage {
-                max-width: 280px;
-            }
-        }
-        
-        /* Canvas レスポンシブ */
-        #canvas {
-            display: block;
-            margin: 0 auto;
-        }
-    </style>
-    
-    <!-- Firebase SDK を先に読み込み -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { 
-            getAuth, 
-            GoogleAuthProvider, 
-            signInWithPopup, 
-            signOut, 
-            onAuthStateChanged 
-        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyC-iwJGuHXc-sTJVBuH3TdVSukw_xhTIrk",
-            authDomain: "g03003.firebaseapp.com",
-            projectId: "g03003",
-            storageBucket: "g03003.firebasestorage.app",
-            messagingSenderId: "873687986818",
-            appId: "1:873687986818:web:dfb6483e0f3ce3a594fa9b"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
-
-        // グローバルに公開
-        window.firebaseAuth = auth;
-        window.googleProvider = provider;
-        window.firebaseSignInWithPopup = signInWithPopup;
-        window.firebaseSignOut = signOut;
-        window.firebaseOnAuthStateChanged = onAuthStateChanged;
-
-        console.log("✅ Firebase初期化完了");
-    </script>
-</head>
-<body>
-    
-    <!-- ログイン画面だよ -->
-    <div id="loginScreen">
-        <div class="settings-container">
-            <h2>シャキッと先生の姿勢ラボ</h2>
+        <!-- ログイン画面だよ -->
+    <div id="loginScreen" class="flex flex-col items-center justify-center min-h-screen w-full">
+        <div class="bg-white p-10 rounded-2xl shadow-xl w-full max-w-[500px]">
+            <h2 class="text-[#333] mb-[30px] text-center text-[28px] font-bold">シャキッと先生の姿勢ラボ</h2>
             
             <!-- Google認証用ボタン（入力フォームは不要） -->
-            <button id="loginButton" class="start-button" style="background: linear-gradient(135deg, #4285f4 0%, #34a853 50%, #fbbc05 75%, #ea4335 100%); background-size: 200% 200%; animation: gradientShift 3s ease infinite; display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <button id="loginButton" class="w-full py-4 px-10 text-lg font-bold flex items-center justify-center gap-2.5 text-white border-none rounded-lg cursor-pointer transition-all duration-300 shadow-md animate-gradient-shift hover:-translate-y-0.5 hover:shadow-lg active:-translate-y-px" style="background-image: linear-gradient(135deg, #4285f4 0%, #34a853 50%, #fbbc05 75%, #ea4335 100%);">
                 🔐 Googleでログイン
             </button>
             
-            <p style="font-size: 14px; color: #666; margin-top: 15px; text-align: center;">
+            <p class="text-sm text-[#666] mt-[15px]">
                 ※ Googleアカウントで安全にログインできます
             </p>
         </div>
     </div>
 
-    <!-- 設定画面 -->
-    <div id="settingScreen" style="display: none;">
-        <h1>シャキッと先生の姿勢ラボ</h1>
-        
-        <div class="settings-container">
-            <h2 style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg>
-                設定
-            </h2>
+        <!-- 設定画面 -->
+        <div id="settingScreen" class="hidden flex-col items-center justify-center min-h-[80vh] max-w-[600px] w-full">
+            <h1 class="text-[#333] mb-5 text-[2em] font-bold">シャキッと先生の姿勢ラボ</h1>
+            
+            <div class="bg-white p-10 rounded-2xl shadow-xl w-full max-w-[500px]">
+                <h2 class="text-[#333] mb-[30px] text-center text-[28px] font-bold flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg>
+                    設定
+                </h2>
 
-            <div class="setting-item">
-                <label for="thresholdSlider">
-                    猫背判定の閾値: <span class="setting-value" id="thresholdValue">165</span>度
-                </label>
-                <input type="range" id="thresholdSlider" min="150" max="180" value="165" step="1">
-                <p style="font-size: 12px; color: #666; margin-top: 5px;">
-                    ※ 値が大きいほど厳しい判定になります！
-                    ( 先生のオススメは165度 )
-                </p>
-            </div>
+                <div class="mb-[25px]">
+                    <label for="thresholdSlider" class="block text-base font-bold text-[#555] mb-[10px]">
+                        猫背判定の閾値: <span class="inline-block ml-[10px] text-lg text-[#007bff] font-bold" id="thresholdValue">165</span>度
+                    </label>
+                    <input type="range" id="thresholdSlider" min="150" max="180" value="165" step="1" class="w-full h-2 rounded-[5px] bg-[#ddd] outline-none cursor-pointer appearance-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#006eff] [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#007bff] [&::-moz-range-thumb]:cursor-pointer">
+                    <p class="text-xs text-[#666] mt-[5px]">
+                        ※ 値が大きいほど厳しい判定になります！
+                        ( 先生のオススメは165度 )
+                    </p>
+                </div>
 
-            <div class="setting-item">
-                <label for="sensitivitySlider">
-                    検出感度: <span class="setting-value" id="sensitivityValue">0.5</span>
-                </label>
-                <input type="range" id="sensitivitySlider" min="0.3" max="0.9" value="0.5" step="0.1">
-                <p style="font-size: 12px; color: #666; margin-top: 5px;">
-                    ※ 値が大きいほど検出精度が高くなります！
-                    ( 先生のオススメは0.5 )
-                </p>
+                <div class="mb-[25px]">
+                    <label for="sensitivitySlider" class="block text-base font-bold text-[#555] mb-[10px]">
+                        検出感度: <span class="inline-block ml-[10px] text-lg text-[#007bff] font-bold" id="sensitivityValue">0.5</span>
+                    </label>
+                    <input type="range" id="sensitivitySlider" min="0.3" max="0.9" value="0.5" step="0.1" class="w-full h-2 rounded-[5px] bg-[#ddd] outline-none cursor-pointer appearance-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#006eff] [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#007bff] [&::-moz-range-thumb]:cursor-pointer">
+                    <p class="text-xs text-[#666] mt-[5px]">
+                        ※ 値が大きいほど検出精度が高くなります！
+                        ( 先生のオススメは0.5 )
+                    </p>
+                </div>
+                
+                <button id="toCameraFromSetting" class="w-full py-[15px] px-[30px] text-xl font-bold cursor-pointer bg-[#28a745] text-white border-none rounded-lg transition-all duration-300 shadow-md mt-5 hover:bg-[#218838] hover:-translate-y-0.5 hover:shadow-lg">カメラ画面へ</button>
             </div>
             
-            <button id="toCameraFromSetting" class="start-button">カメラ画面へ</button>
-        </div>
-        
-        <div id="loginUserDisplay" class="login-user">
-            👤 ログイン中：<span class="font-bold text-[#007bff] loginUserName">---</span>
-        </div>
-        
-        <button class="start-button" onclick="logout()" style="background-color: #dc3545; margin-top: 15px;">
-            ログアウト
-        </button>
-    </div>
-
-    <!-- カメラ画面 -->
-    <div id="cameraScreen" style="display: none;">
-        <h1>シャキッと先生の姿勢ラボ</h1>
-        <div id="motivationMessage"></div>
-        <video id="cam"></video>
-        <canvas id="canvas" width="640" height="480"></canvas>
-        <div class="button-container">
-            <button id="startStopButton">カメラを起動</button>
-            <div id="goodPostureTimer">良い姿勢: 00:00</div>
-        </div>
-        <div id="postureStatus" class="no-detection">姿勢を検出していません</div>
-        <div id="angleInfo">角度: -- °</div>
-        <button id="backButton">
-            <svg xmlns="http://www.w3.org/2000/svg" height="15px" viewBox="0 -960 960 960" width="24px" fill="white"><path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z"/></svg>
-            設定画面に戻る
-        </button>
-    </div>
-
-    <!-- スコア画面 -->
-    <div id="scoreScreen" style="display: none;">
-        <div class="score-card">
-            <h1 class="score-title">📊 姿勢スコア結果</h1>
-
-            <div class="score-times">
-                <p>良い姿勢：<span id="goodTime" class="font-bold">00:03</span></p>
-                <p>悪い姿勢：<span id="badTime" class="font-bold">00:00</span></p>
+            <div id="loginUserDisplay" class="text-sm text-[#555] mb-[10px] p-[10px] bg-[#f8f9fa] rounded-lg border-l-4 border-[#007bff] mt-5">
+                👤 ログイン中：<span class="font-bold text-[#007bff] loginUserName">---</span>
             </div>
+            
+            <button class="w-full py-[15px] px-[30px] text-xl font-bold cursor-pointer bg-[#dc3545] text-white border-none rounded-lg transition-all duration-300 shadow-md mt-[15px] hover:bg-[#c82333] hover:-translate-y-0.5 hover:shadow-lg" onclick="logout()">
+                ログアウト
+            </button>
+        </div>
 
-            <div class="score-main">
-                <span id="scoreValue">100</span>
-                <span class="score-unit">点</span>
+        <!-- カメラ画面 -->
+        <div id="cameraScreen" class="hidden flex-col items-center">
+            <h1 class="text-[#333] mb-5 text-[2em] font-bold">シャキッと先生の姿勢ラボ</h1>
+            <div id="motivationMessage" class="fixed top-5 right-5 py-[15px] px-[25px] text-lg font-bold bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white rounded-xl shadow-lg opacity-0 translate-x-[400px] transition-all duration-500 z-[1000] max-w-[300px] text-center"></div>
+            <video id="cam" class="hidden"></video>
+            <canvas id="canvas" width="640" height="480" class="border-[3px] border-[#333] rounded-lg bg-black shadow-md"></canvas>
+            <div class="flex items-center justify-center mt-5">
+                <button id="startStopButton" class="mt-5 py-3 px-[30px] text-lg font-bold cursor-pointer bg-[#007bff] text-white border-none rounded-lg transition-all duration-300 shadow-md hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed">カメラを起動</button>
+                <div id="goodPostureTimer" class="mt-5 ml-5 py-3 px-[30px] text-lg font-bold bg-[#28a745] text-white border-none rounded-lg shadow-md inline-block">良い姿勢: 00:00</div>
             </div>
-
-            <p id="scoreMessage" class="score-message">
-                ✨ 素晴らしい姿勢です！
-            </p>
-
-            <section id="weeklyScoreSection">
-                <h2 style="text-align: center; margin-bottom: 16px; font-size: 20px;">📊 週間姿勢スコア（<span class="loginUserName" style="color: #007bff;"></span>）</h2>
-                <canvas id="weeklyChart" width="600" height="300"></canvas>
-            </section>
-
-            <button id="backToSettingButton" class="start-button">
+            <div id="postureStatus" class="mt-5 py-5 px-10 text-2xl font-bold rounded-xl text-center min-w-[300px] shadow-md transition-all duration-300 bg-[#6c757d] text-white">姿勢を検出していません</div>
+            <div id="angleInfo" class="mt-[10px] p-[10px] text-sm text-[#666] bg-white rounded-lg min-w-[300px] text-center">角度: -- °</div>
+            <button id="backButton" class="mt-5 py-[10px] px-[25px] text-base cursor-pointer bg-[#6c757d] text-white border-none rounded-lg transition-all duration-300 hover:bg-[#5a6268] flex items-center justify-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" height="15px" viewBox="0 -960 960 960" width="24px" fill="white"><path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z"/></svg>
                 設定画面に戻る
             </button>
         </div>
-    </div>
 
-    <!-- MediaPipe関連のライブラリ -->
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <!-- スコア画面 -->
+        <div id="scoreScreen" class="hidden min-h-screen justify-center items-center">
+            <div class="bg-white p-10 rounded-[20px] w-full max-w-[480px] shadow-2xl text-center">
+                <h1 class="mb-[30px] text-[26px] font-bold">📊 姿勢スコア結果</h1>
 
-    <!-- js（元のmain.jsを読み込み） -->
-    <script src="./js/main.js"></script>
-</body>
+                <div class="flex justify-between mb-[25px] text-base">
+                    <p>良い姿勢：<span id="goodTime" class="font-bold">00:03</span></p>
+                    <p>悪い姿勢：<span id="badTime" class="font-bold">00:00</span></p>
+                </div>
+
+                <div class="text-[64px] font-bold text-[#28a745] mb-[10px]">
+                    <span id="scoreValue">100</span>
+                    <span class="text-2xl ml-[5px]">点</span>
+                </div>
+
+                <p id="scoreMessage" class="text-lg mb-[30px]">
+                    ✨ 素晴らしい姿勢です！
+                </p>
+
+                <section id="weeklyScoreSection">
+                    <h2 class="text-xl mb-4 font-bold">📊 週間姿勢スコア（<span class="loginUserName text-[#007bff]"></span>）</h2>
+                    <canvas id="weeklyChart" width="600" height="300"></canvas>
+                </section>
+
+                <button id="backToSettingButton" class="w-full py-[15px] px-[30px] text-xl font-bold cursor-pointer bg-[#28a745] text-white border-none rounded-lg transition-all duration-300 shadow-md mt-5 hover:bg-[#218838] hover:-translate-y-0.5 hover:shadow-lg">
+                    設定画面に戻る
+                </button>
+            </div>
+        </div>
+
+        <!-- MediaPipe関連のライブラリ -->
+        <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        
+        <!-- 🔥 Firebase SDK (最新モジュール版) 🔥 -->
+        <script type="module">
+            import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+            import { 
+                getAuth, 
+                GoogleAuthProvider, 
+                signInWithPopup, 
+                signOut, 
+                onAuthStateChanged 
+            } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+            // Firebase設定
+            const firebaseConfig = {
+                apiKey: "AIzaSyC-iwJGuHXc-sTJVBuH3TdVSukw_xhTIrk",
+                authDomain: "g03003.firebaseapp.com",
+                projectId: "g03003",
+                storageBucket: "g03003.firebasestorage.app",
+                messagingSenderId: "873687986818",
+                appId: "1:873687986818:web:dfb6483e0f3ce3a594fa9b"
+            };
+
+            // Firebase初期化
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const provider = new GoogleAuthProvider();
+
+            // グローバルに公開（main.jsから使えるように）
+            window.firebaseAuth = auth;
+            window.googleProvider = provider;
+            window.firebaseSignInWithPopup = signInWithPopup;
+            window.firebaseSignOut = signOut;
+            window.firebaseOnAuthStateChanged = onAuthStateChanged;
+
+            console.log("✅ Firebase初期化完了");
+        </script>
+
+        <!-- js（type="module"に変更不要・上記でグローバル公開しているため） -->
+        <script src="./js/main.js" defer></script>
+    </body>
 </html>
