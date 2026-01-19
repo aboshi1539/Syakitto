@@ -38,41 +38,6 @@
         <h1 class="text-[#333] mb-5 text-[2em] font-bold">シャキッと先生の姿勢ラボ</h1>
 
         <div class="bg-white p-10 rounded-2xl shadow-xl w-full max-w-[500px]">
-            <h2 class="text-[#333] mb-[30px] text-center text-[28px] font-bold flex items-center justify-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
-                    fill="#1f1f1f">
-                    <path
-                        d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z" />
-                </svg>
-                設定
-            </h2>
-
-            <div class="mb-[25px]">
-                <label for="thresholdSlider" class="block text-base font-bold text-[#555] mb-[10px]">
-                    猫背判定の閾値: <span class="inline-block ml-[10px] text-lg text-[#007bff] font-bold"
-                        id="thresholdValue">165</span>度
-                </label>
-                <input type="range" id="thresholdSlider" min="150" max="180" value="165" step="1"
-                    class="w-full h-2 rounded-[5px] bg-[#ddd] outline-none cursor-pointer appearance-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#006eff] [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#007bff] [&::-moz-range-thumb]:cursor-pointer">
-                <p class="text-xs text-[#666] mt-[5px]">
-                    ※ 値が大きいほど厳しい判定になります！
-                    ( 先生のオススメは165度 )
-                </p>
-            </div>
-
-            <div class="mb-[25px]">
-                <label for="sensitivitySlider" class="block text-base font-bold text-[#555] mb-[10px]">
-                    検出感度: <span class="inline-block ml-[10px] text-lg text-[#007bff] font-bold"
-                        id="sensitivityValue">0.5</span>
-                </label>
-                <input type="range" id="sensitivitySlider" min="0.3" max="0.9" value="0.5" step="0.1"
-                    class="w-full h-2 rounded-[5px] bg-[#ddd] outline-none cursor-pointer appearance-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#006eff] [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#007bff] [&::-moz-range-thumb]:cursor-pointer">
-                <p class="text-xs text-[#666] mt-[5px]">
-                    ※ 値が大きいほど検出精度が高くなります！
-                    ( 先生のオススメは0.5 )
-                </p>
-            </div>
-
             <button id="toCameraFromSetting"
                 class="w-full py-[15px] px-[30px] text-xl font-bold cursor-pointer bg-[#28a745] text-white border-none rounded-lg transition-all duration-300 shadow-md mt-5 hover:bg-[#218838] hover:-translate-y-0.5 hover:shadow-lg">カメラ画面へ</button>
         </div>
@@ -158,63 +123,62 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- 🔥 Firebase SDK (最新モジュール版) 🔥 -->
-    
 
-<<<<<<< HEAD
-    <!-- js（type="module"に変更不要・上記でグローバル公開しているため） -->
+
+    <!-- js（type="module" に変更不要・上記でグローバル公開しているため） -->
     <script src="./js/main.js" defer></script>
 </body>
 
 </html>
-=======
-        <!-- MediaPipe関連のライブラリ -->
-        <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        
-        <!-- 🔥 Firebase SDK (最新モジュール版) 🔥 -->
-        <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
-    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-  // 🔽 Firestore を追加
-  import { getFirestore, doc, setDoc }
-    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<!-- MediaPipe関連のライブラリ -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  const firebaseConfig = {
-   apiKey: "AIzaSyC-iwJGuHXc-sTJVBuH3TdVSukw_xhTIrk",
-  authDomain: "g03003.firebaseapp.com",
-  projectId: "g03003",
-  storageBucket: "g03003.firebasestorage.app",
-  messagingSenderId: "873687986818",
-  appId: "1:873687986818:web:dfb6483e0f3ce3a594fa9b"
-  };
+<!-- 🔥 Firebase SDK (最新モジュール版) 🔥 -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+        from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const provider = new GoogleAuthProvider();
+    // 🔽 Firestore を追加
+    import { getFirestore, doc, setDoc }
+        from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  // 🔽 Firestore 初期化
-  const db = getFirestore(app);
+    const firebaseConfig = {
+        apiKey: "AIzaSyC-iwJGuHXc-sTJVBuH3TdVSukw_xhTIrk",
+        authDomain: "g03003.firebaseapp.com",
+        projectId: "g03003",
+        storageBucket: "g03003.firebasestorage.app",
+        messagingSenderId: "873687986818",
+        appId: "1:873687986818:web:dfb6483e0f3ce3a594fa9b"
+    };
 
-  // window に公開（←これが超重要）
-  window.firebaseAuth = auth;
-  window.googleProvider = provider;
-  window.firebaseSignInWithPopup = signInWithPopup;
-  window.firebaseSignOut = signOut;
-  window.firebaseOnAuthStateChanged = onAuthStateChanged;
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
 
-  // 🔽 Firestore 関連も公開
-  window.firestoreDB = db;
-  window.firestoreSetDoc = setDoc;
-  window.firestoreDoc = doc;
+    // 🔽 Firestore 初期化
+    const db = getFirestore(app);
+
+    // window に公開（←これが超重要）
+    window.firebaseAuth = auth;
+    window.googleProvider = provider;
+    window.firebaseSignInWithPopup = signInWithPopup;
+    window.firebaseSignOut = signOut;
+    window.firebaseOnAuthStateChanged = onAuthStateChanged;
+
+    // 🔽 Firestore 関連も公開
+    window.firestoreDB = db;
+    window.firestoreSetDoc = setDoc;
+    window.firestoreDoc = doc;
 </script>
 
 
-        <!-- js（type="module"に変更不要・上記でグローバル公開しているため） -->
-        <script src="./js/main.js" defer></script>
-    </body>
+<!-- js（type="module"に変更不要・上記でグローバル公開しているため） -->
+<script src="./js/main.js" defer></script>
+</body>
+
 </html>
->>>>>>> 4240dfef605890799256facba0cc592247610867

@@ -2,10 +2,7 @@
 const settingScreen = document.getElementById("settingScreen");
 const cameraScreen = document.getElementById("cameraScreen");
 const backButton = document.getElementById("backButton");
-const thresholdSlider = document.getElementById("thresholdSlider");
-const thresholdValue = document.getElementById("thresholdValue");
-const sensitivitySlider = document.getElementById("sensitivitySlider");
-const sensitivityValue = document.getElementById("sensitivityValue");
+
 const toCameraFromSetting = document.getElementById("toCameraFromSetting");
 const loginScreen = document.getElementById("loginScreen");
 const loginButton = document.getElementById("loginButton");
@@ -48,8 +45,9 @@ let badPostureTotalTime = 0;
 let badPostureStartTime = null;
 
 // 設定値
-let SLOUCH_THRESHOLD = 165;
-let DETECTION_CONFIDENCE = 0.5;
+// 設定値 (固定)
+const SLOUCH_THRESHOLD = 165;
+const DETECTION_CONFIDENCE = 0.5;
 
 // 画面切り替え（必ず先に定義）
 function showScreen(screen) {
@@ -280,23 +278,7 @@ function showResetMessage() {
     }, 600);
 }
 
-/* =========================
-猫背判定の閾値スライダー
-判定角度をリアルタイム更新
-========================= */
-thresholdSlider.addEventListener('input', (e) => {
-    thresholdValue.textContent = e.target.value;
-    SLOUCH_THRESHOLD = parseInt(e.target.value);
-});
 
-/* =========================
-検出感度スライダー
-MediaPipeの信頼度設定を更新
-========================= */
-sensitivitySlider.addEventListener('input', (e) => {
-    sensitivityValue.textContent = parseFloat(e.target.value).toFixed(1);
-    DETECTION_CONFIDENCE = parseFloat(e.target.value);
-});
 
 /* =========================
 設定画面へ戻る処理
