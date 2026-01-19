@@ -616,6 +616,22 @@ window.addEventListener('beforeunload', () => {
     }
 });
 
+async function saveUserProfile(user) {
+  const uid = user.uid;
+
+  await window.firestoreSetDoc(
+    window.firestoreDoc(window.firestoreDB, "users", uid),
+    {
+      name: user.displayName,
+      email: user.email,
+      lastLogin: new Date()
+    },
+    { merge: true }
+  );
+
+  console.log("✅ Firestore にユーザー登録完了");
+}
+
 /* ============================================================
    🔥 Firebaseログイン処理（Google認証）
 ============================================================ */
@@ -645,6 +661,10 @@ await window.firestoreSetDoc(
             localStorage.setItem("firebaseUID", user.uid);
 
             console.log("✅ ログイン成功:", user.displayName);
+
+            // 🔽 Firestore にユーザー登録
+            await saveUserProfile(user);
+
 
             updateLoginUserName();
             showScreen(settingScreen);
