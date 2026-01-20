@@ -2,7 +2,6 @@
 const settingScreen = document.getElementById("settingScreen");
 const cameraScreen = document.getElementById("cameraScreen");
 const backButton = document.getElementById("backButton");
-
 const toCameraFromSetting = document.getElementById("toCameraFromSetting");
 const loginScreen = document.getElementById("loginScreen");
 const loginButton = document.getElementById("loginButton");
@@ -743,3 +742,18 @@ window.addEventListener("load", () => {
     });
 });
 
+/*canvasのサイズを固定する*/
+function fixCanvasSize() {
+    canvas.width = 640;
+    canvas.height = 480;
+}
+
+fixCanvasSize();
+/*カメラ表示エリアのサイズを調整する*/
+function resizeCanvas() {
+  const canvas = document.getElementById("canvas");
+  const rect = canvas.getBoundingClientRect();
+
+  canvas.width  = rect.width;
+  canvas.height = rect.height;
+}
