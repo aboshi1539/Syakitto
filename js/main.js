@@ -168,7 +168,8 @@ function renderWeeklyChart() {
             responsive: true,
             maintainAspectRatio: false,
             animation: false,
-            resizeDelay: 200
+            resizeDelay: 0,
+            events: [],
         }
     });
 }
@@ -751,9 +752,9 @@ function fixCanvasSize() {
 fixCanvasSize();
 /*カメラ表示エリアのサイズを調整する*/
 function resizeCanvas() {
-  const canvas = document.getElementById("canvas");
-  const rect = canvas.getBoundingClientRect();
+    const canvas = document.getElementById("canvas");
+    const rect = canvas.getBoundingClientRect();
 
-  canvas.width  = rect.width;
-  canvas.height = rect.height;
+    canvas.width = rect.width;
+    canvas.height = rect.height;
 }
