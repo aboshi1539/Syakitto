@@ -576,7 +576,7 @@ body {
     min-height: 100vh;
 
     /* 背景画像 */
-    /*background-image: url("../img/haikei.jpg");
+    background-image: url("img/haikei.jpg");
     /* パスは調整 */
     background-repeat: no-repeat;
     background-size: cover;
