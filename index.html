@@ -8,17 +8,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>シャキッと先生の姿勢ラボ</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="css/styles.css">
+    <!-- Tailwind のカスタム animation を定義 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    keyframes: {
+                        'gradient-shift': {
+                            '0%': { backgroundPosition: '0% 50%' },
+                            '50%': { backgroundPosition: '100% 50%' },
+                            '100%': { backgroundPosition: '0% 50%' },
+                        },
+                        'pulse-scale': {
+                            '0%, 100%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.05)' },
+                        },
+                        celebrate: {
+                            '0%': { transform: 'scale(1)', opacity: '0' },
+                            '50%': { transform: 'scale(1.1)', opacity: '1' },
+                            '100%': { transform: 'scale(1)', opacity: '0' },
+                        },
+                    },
+                    animation: {
+                        'gradient-shift': 'gradient-shift 4s ease infinite',
+                        'pulse-scale': 'pulse-scale 1.2s ease-in-out infinite',
+                        celebrate: 'celebrate 1s ease-in-out',
+                    },
+                },
+            },
+        }
+    </script>
 </head>
 
-<body
-    class="min-h-screen flex flex-col items-center justify-center p-5 font-sans bg-[#f0e1f0] bg-cover bg-center bg-no-repeat m-0"
-    style="background-image: url('https://chat.google.com/u/0/api/get_attachment_url?url_type=FIFE_URL&content_type=image%2Fjpeg&attachment_token=AOo0EEVOAIeyII53eoTquKfc%2BIxtAOhdlGAFANwjjuHOpEokt1Irerexihc0gyFFmVw10jd9l%2Bysguo4w9MBIZHujOn4YKRw4hngz9iZ84Kd%2FrWOiKma6D35fw2ZZD7IP5IAzmJdRAeQCh0Ex2GOZyFw0iPFooD6n1aAhRVmh6rMgfkbQJVV%2B8HXxygZJi2mX2z43QQEHgNEzXNQlIkh9uA1AohGvVXH9WGyWD73dAO9g3xDkqm%2FKGg6d8cmnzk2F%2FmzyV2b8ADGs6Seo0TcQ7UKEtt2MbdNphsTVzsCq%2FOvarfFqc8Vk1jFhnxAi430V3WF21o3%2BI%2F%2FInkohadEe5DJhogNbypavmPSRY12MEafr8oO4WEZqkLt4gx%2FGfpAn9zV5Rw1CqQwUgdGcpJlddaQx6%2BUcIP4NJ%2FaIlje7S5tSMvjRh7NZMrLodYIuvgVAIiJ6Fbp6g41k5oJB5e3TJu3oYWiWwQYBx7XDgBGOA11FHUHZYiBy77QEb4Nc7ssVbSi%2FWQETA%2BVtDV5LIoVW0rY1qO%2FnIVauZxaD27%2BFUe62m8PEEFmfl5%2F32kYjRYTEYZWzYuGsObvRYeIbGtj1j7JkhEWNqjd43iKTMZFAEl5qbop8TlS9hzIvIpmUh%2FfTQp%2Fgg%3D%3D&allow_caching=true&sz=w512');">
 
+<body class="min-h-screen flex flex-col items-center pt-16 p-5 font-sans bg-[#f0e1f0] bg-cover bg-center
+    bg-no-repeat m-0"
+    style="background-image:
+    url('https://chat.google.com/u/0/api/get_attachment_url?url_type=FIFE_URL&content_type=image%2Fjpeg&attachment_token=AOo0EEVOAIeyII53eoTquKfc%2BIxtAOhdlGAFANwjjuHOpEokt1Irerexihc0gyFFmVw10jd9l%2Bysguo4w9MBIZHujOn4YKRw4hngz9iZ84Kd%2FrWOiKma6D35fw2ZZD7IP5IAzmJdRAeQCh0Ex2GOZyFw0iPFooD6n1aAhRVmh6rMgfkbQJVV%2B8HXxygZJi2mX2z43QQEHgNEzXNQlIkh9uA1AohGvVXH9WGyWD73dAO9g3xDkqm%2FKGg6d8cmnzk2F%2FmzyV2b8ADGs6Seo0TcQ7UKEtt2MbdNphsTVzsCq%2FOvarfFqc8Vk1jFhnxAi430V3WF21o3%2BI%2F%2FInkohadEe5DJhogNbypavmPSRY12MEafr8oO4WEZqkLt4gx%2FGfpAn9zV5Rw1CqQwUgdGcpJlddaQx6%2BUcIP4NJ%2FaIlje7S5tSMvjRh7NZMrLodYIuvgVAIiJ6Fbp6g41k5oJB5e3TJu3oYWiWwQYBx7XDgBGOA11FHUHZYiBy77QEb4Nc7ssVbSi%2FWQETA%2BVtDV5LIoVW0rY1qO%2FnIVauZxaD27%2BFUe62m8PEEFmfl5%2F32kYjRYTEYZWzYuGsObvRYeIbGtj1j7JkhEWNqjd43iKTMZFAEl5qbop8TlS9hzIvIpmUh%2FfTQp%2Fgg%3D%3D&allow_caching=true&sz=w512');">
+
+    <header class="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-md shadow-sm z-50 flex justify-center py-2">
+        <h1 class="text-base sm:text-[28px] font-bold whitespace-nowrap">
+            シャキッと先生の姿勢ラボ
+        </h1>
+    </header>
     <!-- ログイン画面だよ -->
     <div id="loginScreen" class="flex flex-col items-center justify-center min-h-screen w-full">
-        <div class="bg-white p-10 rounded-2xl shadow-xl w-full max-w-[500px]">
-            <h2 class="text-[#333] mb-[30px] text-center text-[28px] font-bold">シャキッと先生の姿勢ラボ</h2>
+        <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl w-full max-w-[90vw] sm:max-w-[500px]">
 
             <!-- Google認証用ボタン（入力フォームは不要） -->
             <button id="loginButton"
@@ -35,7 +70,6 @@
 
     <!-- 設定画面 -->
     <div id="settingScreen" class="hidden flex-col items-center justify-center min-h-[80vh] max-w-[600px] w-full">
-        <h1 class="text-[#333] mb-5 text-[2em] font-bold">シャキッと先生の姿勢ラボ</h1>
 
         <div class="bg-white p-10 rounded-2xl shadow-xl w-full max-w-[500px]">
             <button id="toCameraFromSetting"
@@ -48,7 +82,7 @@
         </div>
 
         <button
-            class="w-full py-[15px] px-[30px] text-xl font-bold cursor-pointer bg-[#dc3545] text-white border-none rounded-lg transition-all duration-300 shadow-md mt-[15px] hover:bg-[#c82333] hover:-translate-y-0.5 hover:shadow-lg"
+            class="w-full py-3 sm:py-4 px-6 sm:px-10 text-base sm:text-lg font-bold rounded-lg bg-[#dc3545] text-white"
             onclick="logout()">
             ログアウト
         </button>
@@ -56,13 +90,14 @@
 
     <!-- カメラ画面 -->
     <div id="cameraScreen" class="hidden flex-col items-center">
-        <h1 class="text-[#333] mb-5 text-[2em] font-bold">シャキッと先生の姿勢ラボ</h1>
+
         <div id="motivationMessage"
             class="fixed top-5 right-5 py-[15px] px-[25px] text-lg font-bold bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white rounded-xl shadow-lg opacity-0 translate-x-[400px] transition-all duration-500 z-[1000] max-w-[300px] text-center">
         </div>
         <video id="cam" class="hidden"></video>
-        <canvas id="canvas" width="640" height="480"
-            class="border-[3px] border-[#333] rounded-lg bg-black shadow-md"></canvas>
+        <canvas id="canvas"
+            class="w-full max-w-[95vw] sm:max-w-[640px] aspect-video border-[3px] border-[#333] rounded-lg bg-black shadow-md">
+        </canvas>
         <div class="flex items-center justify-center mt-5">
             <button id="startStopButton"
                 class="mt-5 py-3 px-[30px] text-lg font-bold cursor-pointer bg-[#007bff] text-white border-none rounded-lg transition-all duration-300 shadow-md hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed">カメラを起動</button>
@@ -85,100 +120,92 @@
     </div>
 
     <!-- スコア画面 -->
-    <div id="scoreScreen" class="hidden min-h-screen justify-center items-center">
-        <div class="bg-white p-10 rounded-[20px] w-full max-w-[480px] shadow-2xl text-center">
-            <h1 class="mb-[30px] text-[26px] font-bold">📊 姿勢スコア結果</h1>
+    <div id="scoreScreen" class="hidden min-h-screen flex justify-center items-start pt-20 px-4">
 
-            <div class="flex justify-between mb-[25px] text-base">
+        <div class="bg-white px-6 py-8 sm:p-10 rounded-2xl shadow-2xl w-full max-w-[90vw] sm:max-w-[480px] text-center">
+
+            <h1 class="mb-6 text-lg sm:text-[26px] font-bold whitespace-nowrap flex items-center justify-center gap-2">
+                📊 姿勢スコア結果
+            </h1>
+
+            <div class="flex justify-between mb-6 text-sm sm:text-base">
                 <p>良い姿勢：<span id="goodTime" class="font-bold">00:03</span></p>
                 <p>悪い姿勢：<span id="badTime" class="font-bold">00:00</span></p>
             </div>
 
-            <div class="text-[64px] font-bold text-[#28a745] mb-[10px]">
+            <div class="text-3xl sm:text-[64px] font-bold text-[#28a745] mb-3">
                 <span id="scoreValue">100</span>
-                <span class="text-2xl ml-[5px]">点</span>
+                <span class="text-xl ml-1">点</span>
             </div>
 
             <p id="scoreMessage" class="text-lg mb-[30px]">
                 ✨ 素晴らしい姿勢です！
             </p>
 
-            <section id="weeklyScoreSection">
-                <h2 class="text-xl mb-4 font-bold">📊 週間姿勢スコア（<span class="loginUserName text-[#007bff]"></span>）</h2>
-                <canvas id="weeklyChart" width="600" height="300"></canvas>
+            <section id="weeklyScoreSection" class="mb-6">
+                <h2 class="text-lg sm:text-xl mb-4 font-bold">
+                    📊 週間姿勢スコア（<span class="loginUserName text-[#007bff]"></span>）
+                </h2>
+                <canvas id="weeklyChart" class="w-full max-w-full"></canvas>
             </section>
 
             <button id="backToSettingButton"
-                class="w-full py-[15px] px-[30px] text-xl font-bold cursor-pointer bg-[#28a745] text-white border-none rounded-lg transition-all duration-300 shadow-md mt-5 hover:bg-[#218838] hover:-translate-y-0.5 hover:shadow-lg">
+                class="w-full py-3 sm:py-4 text-base sm:text-lg font-bold bg-[#28a745] text-white rounded-lg transition-all duration-300 shadow-md hover:bg-[#218838]">
                 設定画面に戻る
             </button>
         </div>
     </div>
 
-    <!-- MediaPipe関連のライブラリ -->
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+    <!-- 画面HTMLすべて -->
+
+    <!-- MediaPipe -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- 🔥 Firebase SDK (最新モジュール版) 🔥 -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+            from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // 🔽 Firestore を追加
+        import { getFirestore, doc, setDoc }
+            from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-iwJGuHXc-sTJVBuH3TdVSukw_xhTIrk",
+            authDomain: "g03003.firebaseapp.com",
+            projectId: "g03003",
+            storageBucket: "g03003.firebasestorage.app",
+            messagingSenderId: "873687986818",
+            appId: "1:873687986818:web:dfb6483e0f3ce3a594fa9b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // 🔽 Firestore 初期化
+        const db = getFirestore(app);
+
+        // window に公開（←これが超重要）
+        window.firebaseAuth = auth;
+        window.googleProvider = provider;
+        window.firebaseSignInWithPopup = signInWithPopup;
+        window.firebaseSignOut = signOut;
+        window.firebaseOnAuthStateChanged = onAuthStateChanged;
+
+        // 🔽 Firestore 関連も公開
+        window.firestoreDB = db;
+        window.firestoreSetDoc = setDoc;
+        window.firestoreDoc = doc;
+    </script>
 
 
-    <!-- js（type="module" に変更不要・上記でグローバル公開しているため） -->
+    <!-- js（type="module"に変更不要・上記でグローバル公開しているため） -->
     <script src="./js/main.js" defer></script>
-</body>
-
-</html>
-
-<!-- MediaPipe関連のライブラリ -->
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- 🔥 Firebase SDK (最新モジュール版) 🔥 -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
-        from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-    // 🔽 Firestore を追加
-    import { getFirestore, doc, setDoc }
-        from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyC-iwJGuHXc-sTJVBuH3TdVSukw_xhTIrk",
-        authDomain: "g03003.firebaseapp.com",
-        projectId: "g03003",
-        storageBucket: "g03003.firebasestorage.app",
-        messagingSenderId: "873687986818",
-        appId: "1:873687986818:web:dfb6483e0f3ce3a594fa9b"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-
-    // 🔽 Firestore 初期化
-    const db = getFirestore(app);
-
-    // window に公開（←これが超重要）
-    window.firebaseAuth = auth;
-    window.googleProvider = provider;
-    window.firebaseSignInWithPopup = signInWithPopup;
-    window.firebaseSignOut = signOut;
-    window.firebaseOnAuthStateChanged = onAuthStateChanged;
-
-    // 🔽 Firestore 関連も公開
-    window.firestoreDB = db;
-    window.firestoreSetDoc = setDoc;
-    window.firestoreDoc = doc;
-</script>
-
-
-<!-- js（type="module"に変更不要・上記でグローバル公開しているため） -->
-<script src="./js/main.js" defer></script>
 </body>
 
 </html>
