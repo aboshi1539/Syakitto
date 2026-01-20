@@ -152,26 +152,24 @@ function renderWeeklyChart() {
                 {
                     label: "良い姿勢（分）",
                     data: goodData,
-                    backgroundColor: "rgba(54, 162, 235, 0.7)"
+                    backgroundColor: "rgba(54, 162, 235, 0.7)",
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.6
                 },
                 {
                     label: "猫背（分）",
                     data: badData,
-                    backgroundColor: "rgba(255, 99, 132, 0.7)"
+                    backgroundColor: "rgba(255, 99, 132, 0.7)",
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.6
                 }
             ]
         },
         options: {
             responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: "時間（分）"
-                    }
-                }
-            }
+            maintainAspectRatio: false,
+            animation: false,
+            resizeDelay: 200
         }
     });
 }
@@ -599,19 +597,19 @@ window.addEventListener('beforeunload', () => {
 });
 
 async function saveUserProfile(user) {
-  const uid = user.uid;
+    const uid = user.uid;
 
-  await window.firestoreSetDoc(
-    window.firestoreDoc(window.firestoreDB, "users", uid),
-    {
-      name: user.displayName,
-      email: user.email,
-      lastLogin: new Date()
-    },
-    { merge: true }
-  );
+    await window.firestoreSetDoc(
+        window.firestoreDoc(window.firestoreDB, "users", uid),
+        {
+            name: user.displayName,
+            email: user.email,
+            lastLogin: new Date()
+        },
+        { merge: true }
+    );
 
-  console.log("✅ Firestore にユーザー登録完了");
+    console.log("✅ Firestore にユーザー登録完了");
 }
 
 /* ============================================================
@@ -627,15 +625,15 @@ if (loginButton) {
             );
             const user = result.user;
             // 🔥 Firestore にユーザー情報を保存
-await window.firestoreSetDoc(
-    window.firestoreDoc(window.firestoreDB, "users", user.uid),
-    {
-        name: user.displayName || "",
-        email: user.email || "",
-        lastLogin: new Date()
-    },
-    { merge: true }
-);
+            await window.firestoreSetDoc(
+                window.firestoreDoc(window.firestoreDB, "users", user.uid),
+                {
+                    name: user.displayName || "",
+                    email: user.email || "",
+                    lastLogin: new Date()
+                },
+                { merge: true }
+            );
 
 
             // ユーザー情報を保存
@@ -744,3 +742,4 @@ window.addEventListener("load", () => {
         }
     });
 });
+
