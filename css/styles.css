@@ -11,6 +11,7 @@ body {
     background-color: #f0e1f0;
     margin: 0;
 }
+
 /* =========================
 アプリタイトル
 画面上部に表示される見出し
@@ -19,6 +20,7 @@ h1 {
     color: #333;
     margin-bottom: 20px;
 }
+
 /* =========================
 スタート画面全体
 設定画面を中央に配置
@@ -32,6 +34,7 @@ h1 {
     max-width: 600px;
     width: 100%;
 }
+
 /* =========================
 設定カード
 スタート画面のメインUI
@@ -44,6 +47,7 @@ h1 {
     width: 100%;
     max-width: 500px;
 }
+
 /* =========================
 設定画面：見出し（h2）
 設定カード内のタイトル表示
@@ -54,6 +58,7 @@ h1 {
     text-align: center;
     font-size: 28px;
 }
+
 /* =========================
 設定項目（1ブロック）
 スライダー1項目ごとの間隔
@@ -61,6 +66,7 @@ h1 {
 .setting-item {
     margin-bottom: 25px;
 }
+
 /* =========================
 設定項目のラベル
 スライダーの説明文
@@ -72,6 +78,7 @@ h1 {
     color: #555;
     margin-bottom: 10px;
 }
+
 /* =========================
 スライダー本体（共通）
 閾値・検出感度のバー
@@ -84,6 +91,7 @@ h1 {
     outline: none;
     cursor: pointer;
 }
+
 /* =========================
 スライダーのつまみ（Chrome / Edge）
 ユーザーが動かす丸い部分
@@ -96,6 +104,7 @@ h1 {
     background: #006eff;
     cursor: pointer;
 }
+
 /* =========================
 スライダーのつまみ（Firefox用）
 Chrome以外のブラウザ対応
@@ -107,6 +116,7 @@ Chrome以外のブラウザ対応
     background: #007bff;
     cursor: pointer;
 }
+
 /* =========================
 スライダーの数値表示
 現在の設定値を強調表示
@@ -118,6 +128,7 @@ Chrome以外のブラウザ対応
     color: #007bff;
     font-weight: bold;
 }
+
 /* =========================
 スタートボタン
 カメラ画面へ進むメイン操作
@@ -136,6 +147,7 @@ Chrome以外のブラウザ対応
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     margin-top: 20px;
 }
+
 /* =========================
 スタートボタン（ホバー時）
 押せることを視覚的に伝える
@@ -145,6 +157,7 @@ Chrome以外のブラウザ対応
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
+
 /* =========================
 カメラ画面全体
 スタート画面から切り替えて表示
@@ -154,6 +167,7 @@ Chrome以外のブラウザ対応
     flex-direction: column;
     align-items: center;
 }
+
 /* =========================
 映像描画用キャンバス
 カメラ映像と骨格描画を表示
@@ -164,6 +178,7 @@ Chrome以外のブラウザ対応
     background-color: #000;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
 /* =========================
 非表示の video 要素
 MediaPipe 用の入力元
@@ -171,6 +186,7 @@ MediaPipe 用の入力元
 #cam {
     display: none;
 }
+
 /* =========================
 カメラ開始 / 停止ボタン
 メイン操作ボタン
@@ -188,6 +204,7 @@ MediaPipe 用の入力元
     transition: all 0.3s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
 /* =========================
 カメラボタン（ホバー時）
 押せることを視覚的に強調
@@ -196,6 +213,7 @@ MediaPipe 用の入力元
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
+
 /* =========================
 カメラボタン（クリック中）
 押し込まれた感を表現
@@ -203,6 +221,7 @@ MediaPipe 用の入力元
 #startStopButton:active:not(:disabled) {
     transform: translateY(0);
 }
+
 /* =========================
 カメラボタン（無効状態）
 操作できないことを視覚的に表現
@@ -211,6 +230,7 @@ MediaPipe 用の入力元
     opacity: 0.6;
     cursor: not-allowed;
 }
+
 /* =========================
 良い姿勢タイマー表示
 良い姿勢の累計時間を表示
@@ -228,6 +248,7 @@ MediaPipe 用の入力元
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     display: inline-block;
 }
+
 /* =========================
 ボタン配置用コンテナ
 ボタンとタイマーを横並び
@@ -238,6 +259,7 @@ MediaPipe 用の入力元
     justify-content: center;
     margin-top: 20px;
 }
+
 /* =========================
 姿勢ステータス表示
 良い姿勢 / 猫背 / 未検出 を表示
@@ -253,6 +275,7 @@ MediaPipe 用の入力元
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
 }
+
 /* =========================
 良い姿勢の状態表示
 正しい姿勢が維持できているとき
@@ -261,6 +284,7 @@ MediaPipe 用の入力元
     background-color: #28a745;
     color: white;
 }
+
 /* =========================
 猫背の状態表示
 注意を引くためアニメーション付き
@@ -270,6 +294,7 @@ MediaPipe 用の入力元
     color: white;
     animation: pulse 1s infinite;
 }
+
 /* =========================
 姿勢未検出の状態表示
 カメラが認識していないとき
@@ -278,18 +303,23 @@ MediaPipe 用の入力元
     background-color: #6c757d;
     color: white;
 }
+
 /* =========================
 猫背警告アニメーション
 視線を引き付けるための拡大縮小
 ========================= */
 @keyframes pulse {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.05);
     }
 }
+
 /* =========================
 姿勢角度の情報表示
 現在角度と判定基準を表示
@@ -304,6 +334,7 @@ MediaPipe 用の入力元
     min-width: 300px;
     text-align: center;
 }
+
 /* =========================
 戻るボタン
 カメラ画面 → 設定画面へ戻る
@@ -350,6 +381,7 @@ MediaPipe 用の入力元
     max-width: 300px;
     text-align: center;
 }
+
 /* =========================
 メッセージ表示状態
 JSでクラスを付与して表示
@@ -358,6 +390,7 @@ JSでクラスを付与して表示
     opacity: 1;
     transform: translateX(0);
 }
+
 /* =========================
 達成時の演出アニメーション
 メッセージを揺らして強調
@@ -365,6 +398,7 @@ JSでクラスを付与して表示
 #motivationMessage.celebrate {
     animation: celebrate 0.6s ease;
 }
+
 /* =========================
 リセット時の警告表示
 猫背が続いた場合の演出
@@ -372,17 +406,22 @@ JSでクラスを付与して表示
 #motivationMessage.reset {
     background: linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100%);
 }
+
 /* =========================
 達成メッセージ用アニメーション
 左右に揺らして達成感を演出
 ========================= */
 @keyframes celebrate {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateX(0) scale(1);
     }
+
     25% {
         transform: translateX(-10px) scale(1.1);
     }
+
     75% {
         transform: translateX(10px) scale(1.1);
     }
@@ -417,9 +456,17 @@ JSでクラスを付与して表示
 
 /* Googleカラーのグラデーションアニメーション */
 @keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 /* ログインボタンホバー時 */
@@ -438,87 +485,89 @@ JSでクラスを付与して表示
 スコア画面 全体
 ========================= */
 #scoreScreen {
-  display: none;
-  min-height: 100vh;
-  justify-content: center;
-  align-items: center;
+    display: none;
+    min-height: 100vh;
+    justify-content: center;
+    align-items: center;
 }
 
 /* =========================
 スコアカード
 ========================= */
 .score-card {
-  background: white;
-  padding: 40px;
-  border-radius: 20px;
-  width: 100%;
-  max-width: 480px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  text-align: center;
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    text-align: center;
 }
 
 /* タイトル */
 .score-title {
-  margin-bottom: 30px;
-  font-size: 26px;
+    margin-bottom: 30px;
+    font-size: 26px;
 }
 
 /* 時間表示 */
 .score-times {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 25px;
-  font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
+    font-size: 16px;
 }
 
 /* スコアの数字 */
 .score-main {
-  font-size: 64px;
-  font-weight: bold;
-  color: #28a745;
-  margin-bottom: 10px;
+    font-size: 64px;
+    font-weight: bold;
+    color: #28a745;
+    margin-bottom: 10px;
 }
+
 /* スコアの点数 */
 .score-unit {
-  font-size: 24px;
-  margin-left: 5px;
+    font-size: 24px;
+    margin-left: 5px;
 }
 
 /* コメント */
 .score-message {
-  font-size: 18px;
-  margin-bottom: 30px;
+    font-size: 18px;
+    margin-bottom: 30px;
 }
 
 /* =========================
 ログインユーザー表示
 ========================= */
 .login-user {
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 10px;
-  padding: 10px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  border-left: 4px solid #007bff;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
 }
 
 .login-user span {
-  font-weight: bold;
-  color: #007bff;
+    font-weight: bold;
+    color: #007bff;
 }
 
 /* =========================
 ログアウトボタンのスタイル調整
 ========================= */
 #settingScreen .start-button[onclick="logout()"] {
-  background-color: #dc3545;
-  margin-top: 15px;
+    background-color: #dc3545;
+    margin-top: 15px;
 }
 
 #settingScreen .start-button[onclick="logout()"]:hover {
-  background-color: #c82333;
+    background-color: #c82333;
 }
+
 /* =========================
 背景画像
 ========================= */
@@ -527,7 +576,8 @@ body {
     min-height: 100vh;
 
     /* 背景画像 */
-    background-image: url("https://chat.google.com/u/0/api/get_attachment_url?url_type=FIFE_URL&content_type=image%2Fjpeg&attachment_token=AOo0EEVOAIeyII53eoTquKfc%2BIxtAOhdlGAFANwjjuHOpEokt1Irerexihc0gyFFmVw10jd9l%2Bysguo4w9MBIZHujOn4YKRw4hngz9iZ84Kd%2FrWOiKma6D35fw2ZZD7IP5IAzmJdRAeQCh0Ex2GOZyFw0iPFooD6n1aAhRVmh6rMgfkbQJVV%2B8HXxygZJi2mX2z43QQEHgNEzXNQlIkh9uA1AohGvVXH9WGyWD73dAO9g3xDkqm%2FKGg6d8cmnzk2F%2FmzyV2b8ADGs6Seo0TcQ7UKEtt2MbdNphsTVzsCq%2FOvarfFqc8Vk1jFhnxAi430V3WF21o3%2BI%2F%2FInkohadEe5DJhogNbypavmPSRY12MEafr8oO4WEZqkLt4gx%2FGfpAn9zV5Rw1CqQwUgdGcpJlddaQx6%2BUcIP4NJ%2FaIlje7S5tSMvjRh7NZMrLodYIuvgVAIiJ6Fbp6g41k5oJB5e3TJu3oYWiWwQYBx7XDgBGOA11FHUHZYiBy77QEb4Nc7ssVbSi%2FWQETA%2BVtDV5LIoVW0rY1qO%2FnIVauZxaD27%2BFUe62m8PEEFmfl5%2F32kYjRYTEYZWzYuGsObvRYeIbGtj1j7JkhEWNqjd43iKTMZFAEl5qbop8TlS9hzIvIpmUh%2FfTQp%2Fgg%3D%3D&allow_caching=true&sz=w512"); /* パスは調整 */
+    /*background-image: url("../img/haikei.jpg");
+    /* パスは調整 */
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -537,6 +587,7 @@ body {
     justify-content: center;
     align-items: center;
 }
+
 /* =========================================================
    Custom Animations for Posture App (姿勢ラボ)
    ---------------------------------------------------------
@@ -552,8 +603,10 @@ body {
    ・「計測中」「検知中」などの表現に使用
    --------------------------------------------------------- */
 @keyframes pulse-scale {
+
     /* 通常サイズ */
-    0%, 100% {
+    0%,
+    100% {
         transform: scale(1);
     }
 
@@ -562,6 +615,7 @@ body {
         transform: scale(1.05);
     }
 }
+
 /* ---------------------------------------------------------
    ② お祝い・達成時の揺れアニメーション
    ・良い姿勢を一定時間維持できたとき
@@ -569,8 +623,10 @@ body {
    ・ポジティブなフィードバック用
    --------------------------------------------------------- */
 @keyframes celebrate {
+
     /* 初期状態 */
-    0%, 100% {
+    0%,
+    100% {
         transform: translateX(0) scale(1);
     }
 
@@ -584,6 +640,7 @@ body {
         transform: translateX(10px) scale(1.1);
     }
 }
+
 /* ---------------------------------------------------------
    ③ グラデーションを横方向に流すアニメーション
    ・背景
@@ -591,6 +648,7 @@ body {
    ・状態が「良好」であることを視覚的に表現
    --------------------------------------------------------- */
 @keyframes gradientShift {
+
     /* 左から開始 */
     0% {
         background-position: 0% 50%;
@@ -619,6 +677,7 @@ body {
 .animate-pulse-scale {
     animation: pulse-scale 1s infinite;
 }
+
 /* ---------------------------------------------------------
    一度だけ実行するお祝いアニメーション
    JS でクラスを付け外しする想定
@@ -626,6 +685,7 @@ body {
 .animate-celebrate {
     animation: celebrate 0.6s ease;
 }
+
 /* ---------------------------------------------------------
    背景グラデーションをなめらかに移動させる
    ・background-size は必須
