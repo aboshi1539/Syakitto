@@ -19,6 +19,7 @@ const postureStatus = document.getElementById("postureStatus");
 const angleInfo = document.getElementById("angleInfo");
 const goodPostureTimer = document.getElementById("goodPostureTimer");
 const motivationMessage = document.getElementById("motivationMessage");
+const maxScoreValueEl = document.getElementById("maxScoreValue");
 
 // 記録用のオブジェクト
 let postureLog = getPostureLog();
@@ -204,6 +205,43 @@ const motivationMessages = [
     { time: 1800000, message: "🎯 30分達成！伝説的です！" },
     { time: 3000000, message: "😶 50分達成！もはや怖い！怖すぎます！逃げろー！！" }
 ];
+
+/* =========================
+   最長スコア関連の関数
+========================= */
+function getMaxScore() {
+    const user = getCurrentUser();
+    if (!user) return 0;
+    return parseInt(localStorage.getItem(`maxScore_${user}`) || "0", 10);
+}
+
+function checkAndSaveMaxScore(currentScoreMs) {
+    const maxScore = getMaxScore();
+    if (currentScoreMs > maxScore) {
+        const user = getCurrentUser();
+        if (user) {
+            localStorage.setItem(`maxScore_${user}`, currentScoreMs);
+            console.log(`🎉 New Max Score Saved: ${currentScoreMs}ms`);
+        }
+    }
+}
+
+function updateMaxScoreUI() {
+    if (!maxScoreValueEl) return;
+    const maxScore = getMaxScore();
+    if (maxScore > 0) {
+        maxScoreValueEl.textContent = formatTimeMMSSJapanese(maxScore);
+    } else {
+        maxScoreValueEl.textContent = "--分--秒";
+    }
+}
+
+function formatTimeMMSSJapanese(ms) {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}分${seconds}秒`;
+}
 
 /* =========================
 ミリ秒(ms) → "mm:ss" に変換
@@ -576,6 +614,9 @@ function stopCameraAndPose() {
 
     console.log("Camera stopped successfully");
     updateScoreScreen();
+    // 最長スコアの更新チェック
+    checkAndSaveMaxScore(goodPostureTotalTime);
+    updateMaxScoreUI(); // UI更新
     showScreen(scoreScreen);
     setTimeout(() => renderWeeklyChart(), 0);
 }
@@ -684,6 +725,7 @@ function updateLoginUserName() {
     document.querySelectorAll(".loginUserName").forEach(el => {
         el.textContent = user ? user : "未ログイン";
     });
+    updateMaxScoreUI(); // ユーザー変更時に最長スコアも更新
 }
 
 /* ============================================================
