@@ -452,23 +452,25 @@ pose.onResults((results) => {
         const { isSlouching, angle } = detectSlouch(results.poseLandmarks);
         const currentTime = Date.now();
 
-        // カスタム接続の定義（顔と腕を除外）
-        const CUSTOM_POSE_CONNECTIONS = [
-            [11, 12], // 左肩 - 右肩
-            [11, 23], // 左肩 - 左腰
-            [12, 24], // 右肩 - 右腰
-            [23, 24], // 左腰 - 右腰
-            [23, 25], [24, 26], // 腰 - 膝
-            [25, 27], [26, 28], // 膝 - 足首
-            [27, 29], [28, 30], // 足首 - かかと
-            [29, 31], [30, 32], // かかと - つま先
-            [27, 31], [28, 32]  // 足首 - つま先
-        ];
+        // 肩と腰の中点を計算して背骨を描画
+        const leftShoulder = results.poseLandmarks[11];
+        const rightShoulder = results.poseLandmarks[12];
+        const leftHip = results.poseLandmarks[23];
+        const rightHip = results.poseLandmarks[24];
 
-        drawConnectors(ctx, results.poseLandmarks, CUSTOM_POSE_CONNECTIONS, {
-            color: '#00FF00',
-            lineWidth: 4
-        });
+        if (leftShoulder && rightShoulder && leftHip && rightHip) {
+            const shoulderMidX = (leftShoulder.x + rightShoulder.x) / 2;
+            const shoulderMidY = (leftShoulder.y + rightShoulder.y) / 2;
+            const hipMidX = (leftHip.x + rightHip.x) / 2;
+            const hipMidY = (leftHip.y + rightHip.y) / 2;
+
+            ctx.beginPath();
+            ctx.moveTo(shoulderMidX * canvas.width, shoulderMidY * canvas.height);
+            ctx.lineTo(hipMidX * canvas.width, hipMidY * canvas.height);
+            ctx.strokeStyle = '#00FF00'; // 緑色
+            ctx.lineWidth = 4;
+            ctx.stroke();
+        }
 
         // drawLandmarksの代わりに、耳以外の顔パーツを除外して描画
         // 顔のランドマークは 0〜10
