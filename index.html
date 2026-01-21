@@ -79,6 +79,22 @@
                 <p class="text-sm text-gray-500 font-bold mb-1">平均姿勢維持時間</p>
                 <p id="avgScoreValue" class="text-2xl font-bold text-[#4285f4]">--分--秒</p>
             </div>
+            <div class="mb-5 flex flex-col items-center">
+                <label class="font-bold text-[#555] mb-2">判定モード</label>
+                <div class="flex gap-4">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="detectMode" value="side" checked
+                            class="w-4 h-4 text-[#007bff] focus:ring-[#007bff]">
+                        横向き（角度）
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="detectMode" value="front"
+                            class="w-4 h-4 text-[#007bff] focus:ring-[#007bff]">
+                        正面（奥行き）
+                    </label>
+                </div>
+            </div>
+
             <button id="toCameraFromSetting"
                 class="w-full py-[15px] px-[30px] text-xl font-bold cursor-pointer bg-[#28a745] text-white border-none rounded-lg transition-all duration-300 shadow-md hover:bg-[#218838] hover:-translate-y-0.5 hover:shadow-lg">カメラ画面へ</button>
         </div>

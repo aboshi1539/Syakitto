@@ -47,8 +47,16 @@ let badPostureStartTime = null;
 
 // 設定値
 // 設定値 (固定)
+// 設定値 (固定)
 const SLOUCH_THRESHOLD = 165;
 const DETECTION_CONFIDENCE = 0.5;
+// 正面判定の閾値（肩のZ - 鼻のZ）
+// 鼻が肩より一定以上手前（Zが小さい）にあると猫背
+// 値が大きいほど、より厳しい（少しの前傾で猫背判定）
+const FRONT_SLOUCH_THRESHOLD = 0.1;
+
+// 判定モード ("side" or "front")
+let currentDetectMode = "side";
 
 // 画面切り替え（必ず先に定義）
 function showScreen(screen) {
@@ -379,6 +387,19 @@ const pose = new Pose({
 });
 
 /* =========================
+判定モードの変更監視
+========================= */
+const modeRadios = document.getElementsByName("detectMode");
+modeRadios.forEach(radio => {
+    radio.addEventListener("change", (e) => {
+        if (e.target.checked) {
+            currentDetectMode = e.target.value;
+            console.log("Detect Mode Changed:", currentDetectMode);
+        }
+    });
+});
+
+/* =========================
 Pose 推定オプション設定
 精度と滑らかさのバランス調整
 ========================= */
@@ -416,6 +437,28 @@ function detectSlouch(landmarks) {
     const leftHip = landmarks[23];
     const rightHip = landmarks[24];
 
+    // ----- 正面判定モード (Z座標) -----
+    if (currentDetectMode === "front") {
+        const nose = landmarks[0];
+
+        // 肩のZ座標平均
+        const shoulderZ = (leftShoulder.z + rightShoulder.z) / 2;
+        // 鼻のZ座標
+        const noseZ = nose.z;
+
+        // 差分（肩 - 鼻）
+        // MediaPipeのZはカメラに近いほど負の値になる傾向があるが、
+        // 一般的には相対値。鼻が手前（カメラに近い）なら nose.z < shoulderZ
+        // したがって (shoulderZ - noseZ) が正の値で大きくなるほど「顔が前に出ている」
+        const depthDiff = shoulderZ - noseZ;
+
+        const isSlouching = depthDiff > FRONT_SLOUCH_THRESHOLD;
+
+        // 表示用に数値を整形 (わかりやすく100倍して小数点丸めなど)
+        return { isSlouching, angle: (depthDiff * 100).toFixed(1) + " (突出度)" };
+    }
+
+    // ----- 横向き判定モード (角度) -----
     const earMid = {
         x: (leftEar.x + rightEar.x) / 2,
         y: (leftEar.y + rightEar.y) / 2
@@ -431,6 +474,7 @@ function detectSlouch(landmarks) {
 
     const angle = calculateAngle(earMid, shoulderMid, hipMid);
     const isSlouching = angle < SLOUCH_THRESHOLD;
+    // 角度モードの時は単位（°）をつけるのは呼出元で行っているが、形を合わせる
     return { isSlouching, angle: angle.toFixed(1) };
 }
 
@@ -534,7 +578,11 @@ pose.onResults((results) => {
             postureStatus.classList.add("bg-[#28a745]"); // Green
         }
 
-        angleInfo.textContent = `角度: ${angle}° (基準: ${SLOUCH_THRESHOLD}°)`;
+        if (currentDetectMode === "front") {
+            angleInfo.textContent = `判定値: ${angle} (基準: ${(FRONT_SLOUCH_THRESHOLD * 100).toFixed(1)})`;
+        } else {
+            angleInfo.textContent = `角度: ${angle}° (基準: ${SLOUCH_THRESHOLD}°)`;
+        }
 
         if (isSlouching) {
             ctx.fillStyle = 'rgba(220, 53, 69, 0.8)';
