@@ -456,10 +456,24 @@ pose.onResults((results) => {
             color: '#00FF00',
             lineWidth: 4
         });
-        drawLandmarks(ctx, results.poseLandmarks, {
-            color: '#FF0000',
-            lineWidth: 2
-        });
+
+        // drawLandmarksの代わりに、耳以外の顔パーツを除外して描画
+        // 顔のランドマークは 0〜10
+        // 耳は 7 (左), 8 (右) なのでこれらは描画する
+        // 除外対象: 0, 1, 2, 3, 4, 5, 6, 9, 10
+        for (let i = 0; i < results.poseLandmarks.length; i++) {
+            // 顔のパーツ(0-10)かつ耳(7,8)以外ならスキップ
+            if (i <= 10 && i !== 7 && i !== 8) {
+                continue;
+            }
+            const landmark = results.poseLandmarks[i];
+
+            // 描画処理 (drawLandmarksのデフォルトスタイルに似せる: 赤色、半径適当)
+            ctx.beginPath();
+            ctx.arc(landmark.x * canvas.width, landmark.y * canvas.height, 4, 0, 2 * Math.PI);
+            ctx.fillStyle = '#FF0000';
+            ctx.fill();
+        }
 
         if (!isSlouching && lastPostureState === true) {
             if (badPostureStartTime !== null) {
