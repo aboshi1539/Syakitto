@@ -452,7 +452,20 @@ pose.onResults((results) => {
         const { isSlouching, angle } = detectSlouch(results.poseLandmarks);
         const currentTime = Date.now();
 
-        drawConnectors(ctx, results.poseLandmarks, POSE_CONNECTIONS, {
+        // カスタム接続の定義（顔と腕を除外）
+        const CUSTOM_POSE_CONNECTIONS = [
+            [11, 12], // 左肩 - 右肩
+            [11, 23], // 左肩 - 左腰
+            [12, 24], // 右肩 - 右腰
+            [23, 24], // 左腰 - 右腰
+            [23, 25], [24, 26], // 腰 - 膝
+            [25, 27], [26, 28], // 膝 - 足首
+            [27, 29], [28, 30], // 足首 - かかと
+            [29, 31], [30, 32], // かかと - つま先
+            [27, 31], [28, 32]  // 足首 - つま先
+        ];
+
+        drawConnectors(ctx, results.poseLandmarks, CUSTOM_POSE_CONNECTIONS, {
             color: '#00FF00',
             lineWidth: 4
         });
