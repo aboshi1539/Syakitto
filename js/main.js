@@ -53,7 +53,7 @@ const DETECTION_CONFIDENCE = 0.5;
 // 正面判定の閾値（肩のZ - 鼻のZ）
 // 鼻が肩より一定以上手前（Zが小さい）にあると猫背
 // 値が大きいほど、より厳しい（少しの前傾で猫背判定）
-const FRONT_SLOUCH_THRESHOLD = 0.1;
+const FRONT_SLOUCH_THRESHOLD = 0.2;
 
 // 判定モード ("side" or "front")
 let currentDetectMode = "side";
