@@ -20,6 +20,7 @@ const angleInfo = document.getElementById("angleInfo");
 const goodPostureTimer = document.getElementById("goodPostureTimer");
 const motivationMessage = document.getElementById("motivationMessage");
 const maxScoreValueEl = document.getElementById("maxScoreValue");
+const avgScoreValueEl = document.getElementById("avgScoreValue");
 
 // 記録用のオブジェクト
 let postureLog = getPostureLog();
@@ -233,6 +234,45 @@ function updateMaxScoreUI() {
         maxScoreValueEl.textContent = formatTimeMMSSJapanese(maxScore);
     } else {
         maxScoreValueEl.textContent = "--分--秒";
+    }
+}
+
+/* =========================
+   平均姿勢維持時間関連の関数
+========================= */
+function getAverageStats() {
+    const user = getCurrentUser();
+    if (!user) return { totalGoodTime: 0, sessionCount: 0 };
+    return JSON.parse(localStorage.getItem(`stats_${user}`) || '{"totalGoodTime": 0, "sessionCount": 0}');
+}
+
+function saveAverageStats(stats) {
+    const user = getCurrentUser();
+    if (user) {
+        localStorage.setItem(`stats_${user}`, JSON.stringify(stats));
+    }
+}
+
+function updateAverageScore(currentSessionGoodTime) {
+    // セッション時間が0の場合はカウントしない（誤操作対策）
+    if (currentSessionGoodTime <= 0) return;
+
+    const stats = getAverageStats();
+    stats.totalGoodTime += currentSessionGoodTime;
+    stats.sessionCount += 1;
+    saveAverageStats(stats);
+    updateAverageScoreUI();
+    console.log(`📊 Updated Stats - Total: ${stats.totalGoodTime}, Count: ${stats.sessionCount}, Avg: ${stats.totalGoodTime / stats.sessionCount}`);
+}
+
+function updateAverageScoreUI() {
+    if (!avgScoreValueEl) return;
+    const stats = getAverageStats();
+    if (stats.sessionCount > 0) {
+        const averageMs = stats.totalGoodTime / stats.sessionCount;
+        avgScoreValueEl.textContent = formatTimeMMSSJapanese(averageMs);
+    } else {
+        avgScoreValueEl.textContent = "--分--秒";
     }
 }
 
@@ -617,6 +657,8 @@ function stopCameraAndPose() {
     // 最長スコアの更新チェック
     checkAndSaveMaxScore(goodPostureTotalTime);
     updateMaxScoreUI(); // UI更新
+    // 平均スコアの更新
+    updateAverageScore(goodPostureTotalTime);
     showScreen(scoreScreen);
     setTimeout(() => renderWeeklyChart(), 0);
 }
@@ -726,6 +768,7 @@ function updateLoginUserName() {
         el.textContent = user ? user : "未ログイン";
     });
     updateMaxScoreUI(); // ユーザー変更時に最長スコアも更新
+    updateAverageScoreUI(); // 平均スコアも更新
 }
 
 /* ============================================================
