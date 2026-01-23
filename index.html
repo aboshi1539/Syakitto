@@ -94,6 +94,19 @@
                     </label>
                 </div>
             </div>
+            <div class="mb-5 flex flex-col items-center">
+                <label class="font-bold text-[#555] mb-2">猫背アラート音</label>
+                <div class="flex items-center gap-3">
+                    <span class="text-sm font-bold text-gray-400">OFF</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="soundToggle" class="sr-only peer">
+                        <div
+                            class="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-[#007bff]">
+                        </div>
+                    </label>
+                    <span class="text-sm font-bold text-[#007bff]">ON</span>
+                </div>
+            </div>
 
             <button id="toCameraFromSetting"
                 class="w-full py-[15px] px-[30px] text-xl font-bold cursor-pointer bg-[#28a745] text-white border-none rounded-lg transition-all duration-300 shadow-md hover:bg-[#218838] hover:-translate-y-0.5 hover:shadow-lg">カメラ画面へ</button>

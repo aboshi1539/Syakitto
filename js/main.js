@@ -57,7 +57,13 @@ const DETECTION_CONFIDENCE = 0.5;
 const FRONT_SLOUCH_THRESHOLD = 0.7;
 
 // 判定モード ("side" or "front")
+// 判定モード ("side" or "front")
 let currentDetectMode = "side";
+
+// 音声通知設定
+let isSoundEnabled = false;
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
 
 // 画面切り替え（必ず先に定義）
 function showScreen(screen) {
@@ -573,6 +579,11 @@ pose.onResults((results) => {
             postureStatus.textContent = "⚠️ 猫背を検知しました！";
             postureStatus.classList.remove("bg-[#6c757d]", "bg-[#28a745]", "bg-[#dc3545]", "animate-pulse-scale");
             postureStatus.classList.add("bg-[#dc3545]", "animate-pulse-scale"); // Red
+
+            // 以前が良い姿勢で、今回猫背になった瞬間に音を鳴らす
+            if (lastPostureState === false && isSoundEnabled) {
+                playAlertSound();
+            }
         } else {
             postureStatus.textContent = "✅ 良い姿勢です";
             postureStatus.classList.remove("bg-[#6c757d]", "bg-[#28a745]", "bg-[#dc3545]", "animate-pulse-scale");
@@ -920,4 +931,58 @@ function resizeCanvas() {
 
     canvas.width = rect.width;
     canvas.height = rect.height;
+}
+
+/* ============================================================
+   🔊 音声通知関連
+============================================================ */
+function playAlertSound() {
+    if (!isSoundEnabled) return;
+
+    // ブラウザの自動再生ポリシー対策 (uspendedなら再開)
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+
+    oscillator.type = 'sine';
+    // 880Hz(A5) -> 440Hz(A4) へピッチダウンさせて「警告」感を出す
+    oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.3);
+
+    // 音量制御
+    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + 0.3);
+}
+
+// 設定画面のスイッチイベント
+const soundToggle = document.getElementById("soundToggle");
+if (soundToggle) {
+    // 初期値読み込み
+    const saved = localStorage.getItem("isSoundEnabled");
+    if (saved === "true") {
+        isSoundEnabled = true;
+        soundToggle.checked = true;
+    }
+
+    soundToggle.addEventListener("change", (e) => {
+        isSoundEnabled = e.target.checked;
+        localStorage.setItem("isSoundEnabled", isSoundEnabled);
+
+        // ONにした時に試し鳴らし＆AudioContextのロック解除
+        if (isSoundEnabled) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            playAlertSound();
+        }
+    });
 }
