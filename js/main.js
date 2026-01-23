@@ -28,14 +28,16 @@ let lastDateKey = getNowKey().dateKey;
 let weeklyChart = null;
 
 // 制御用の変数
-let camera = null;
 let isCameraRunning = false;
+
 
 // タイマー関連の変数
 let goodPostureStartTime = null;
 let goodPostureTotalTime = 0;
 let lastPostureState = null;
 let lastMessageMilestone = 0;
+let detectionIntervalId = null; // カメラループ用のInterval ID
+
 
 // 猫背状態の時間管理
 let slouchStartTime = null;
@@ -669,22 +671,55 @@ async function startCameraAndPose() {
     angleInfo.textContent = "角度: -- °";
 
     try {
-        camera = new Camera(video, {
-            onFrame: async () => {
-                if (isCameraRunning) {
-                    await pose.send({ image: video });
-                }
+        // 自前でカメラストリームを取得
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                width: 640,
+                height: 480
             },
-            width: 640,
-            height: 480
+            audio: false
+        });
+        video.srcObject = stream;
+
+        // メタデータ読み込み完了を待つ
+        await new Promise((resolve) => {
+            video.onloadedmetadata = () => {
+                // MediaPipeのために明示的にサイズを設定
+                video.width = video.videoWidth;
+                video.height = video.videoHeight;
+                resolve();
+            };
         });
 
-        await camera.start();
+        // 再生開始
+        await video.play();
+
         isCameraRunning = true;
         button.textContent = "カメラを停止";
         button.classList.remove('bg-[#007bff]');
         button.classList.add('bg-[#dc3545]');
-        console.log("Camera started successfully");
+        console.log("Camera started successfully (Background Mode Supported)");
+
+        // 二重処理防止フラグ
+        let isProcessing = false;
+
+        // ループ処理開始 (setInterval)
+        // 100ms間隔 = 10fps に上げてレスポンス向上
+        detectionIntervalId = setInterval(async () => {
+            if (!isCameraRunning || isProcessing) return;
+
+            if (video.readyState >= 2) { // HAVE_CURRENT_DATA
+                isProcessing = true;
+                try {
+                    await pose.send({ image: video });
+                } catch (err) {
+                    console.error("Pose detection error:", err);
+                } finally {
+                    isProcessing = false;
+                }
+            }
+        }, 100);
+
     } catch (error) {
         console.error("Camera start error:", error);
         alert("カメラの起動に失敗しました。カメラの権限を確認してください。");
@@ -697,14 +732,13 @@ function stopCameraAndPose() {
     console.log("Stopping camera...");
     isCameraRunning = false;
 
-    if (camera) {
-        try {
-            camera.stop();
-        } catch (error) {
-            console.error("Camera stop error:", error);
-        }
+    // interval停止
+    if (detectionIntervalId) {
+        clearInterval(detectionIntervalId);
+        detectionIntervalId = null;
     }
 
+    // カメラストリームの停止処理
     if (video.srcObject) {
         const tracks = video.srcObject.getTracks();
         tracks.forEach(track => {
@@ -713,6 +747,7 @@ function stopCameraAndPose() {
         });
         video.srcObject = null;
     }
+
 
     const now = Date.now();
     if (lastPostureState === false && goodPostureStartTime !== null) {
@@ -727,7 +762,7 @@ function stopCameraAndPose() {
     }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    camera = null;
+    // camera = null; // 変数削除済み
     button.textContent = "カメラを起動";
     button.classList.remove('bg-[#dc3545]');
     button.classList.add('bg-[#007bff]');
