@@ -21,6 +21,9 @@ const goodPostureTimer = document.getElementById("goodPostureTimer");
 const motivationMessage = document.getElementById("motivationMessage");
 const maxScoreValueEl = document.getElementById("maxScoreValue");
 const avgScoreValueEl = document.getElementById("avgScoreValue");
+const userMenuButton = document.getElementById("userMenuButton");
+const userMenu = document.getElementById("userMenu");
+
 
 // 記録用のオブジェクト
 let postureLog = getPostureLog();
@@ -370,9 +373,22 @@ function showResetMessage() {
         motivationMessage.classList.add('from-[#667eea]', 'to-[#764ba2]');
     }, 600);
 }
-
-
-
+//アイコンタップ
+userMenuButton.addEventListener("click", () => {
+    userMenu.classList.toggle("hidden");
+});
+//画面外をクリックしたら閉じる
+document.addEventListener("click", (e) => {
+    if (!userMenuButton.contains(e.target)) {
+        userMenu.classList.add("hidden");
+    }
+});
+//設定を開く
+function openSetting() {
+    userMenu.classList.add("hidden");
+    showScreen(settingScreen); // 既存の画面切り替え関数を使う想定
+}
+//
 /* =========================
 設定画面へ戻る処理
 カメラ動作中は安全に停止
