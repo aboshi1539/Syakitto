@@ -240,6 +240,8 @@ function checkAndSaveMaxScore(currentScoreMs) {
         if (user) {
             localStorage.setItem(`maxScore_${user}`, currentScoreMs);
             console.log(`🎉 New Max Score Saved: ${currentScoreMs}ms`);
+            // Firestoreに保存 (最長記録: max)
+            updateFirestoreUser({ max: currentScoreMs });
         }
     }
 }
@@ -279,7 +281,11 @@ function updateAverageScore(currentSessionGoodTime) {
     stats.sessionCount += 1;
     saveAverageStats(stats);
     updateAverageScoreUI();
-    console.log(`📊 Updated Stats - Total: ${stats.totalGoodTime}, Count: ${stats.sessionCount}, Avg: ${stats.totalGoodTime / stats.sessionCount}`);
+    const avgVal = stats.totalGoodTime / stats.sessionCount;
+    console.log(`📊 Updated Stats - Total: ${stats.totalGoodTime}, Count: ${stats.sessionCount}, Avg: ${avgVal}`);
+
+    // Firestoreに保存 (平均記録: avg)
+    updateFirestoreUser({ avg: avgVal });
 }
 
 function updateAverageScoreUI() {
@@ -802,6 +808,22 @@ window.addEventListener('beforeunload', () => {
         stopCameraAndPose();
     }
 });
+
+async function updateFirestoreUser(data) {
+    const uid = localStorage.getItem("firebaseUID");
+    if (!uid) return;
+
+    try {
+        await window.firestoreSetDoc(
+            window.firestoreDoc(window.firestoreDB, "users", uid),
+            data,
+            { merge: true }
+        );
+        console.log("🔥 Firestore Updated:", data);
+    } catch (e) {
+        console.error("❌ Firestore Update Error:", e);
+    }
+}
 
 async function saveUserProfile(user) {
     const uid = user.uid;
