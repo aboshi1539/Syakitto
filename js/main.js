@@ -1,7 +1,6 @@
 // HTML要素を取得
 const settingScreen = document.getElementById("settingScreen");
 const cameraScreen = document.getElementById("cameraScreen");
-const backButton = document.getElementById("backButton");
 const toCameraFromSetting = document.getElementById("toCameraFromSetting");
 const loginScreen = document.getElementById("loginScreen");
 const loginButton = document.getElementById("loginButton");
@@ -394,18 +393,6 @@ function openSetting() {
     userMenu.classList.add("hidden");
     showScreen(settingScreen); // 既存の画面切り替え関数を使う想定
 }
-//
-/* =========================
-設定画面へ戻る処理
-カメラ動作中は安全に停止
-========================= */
-backButton.addEventListener('click', () => {
-    if (isCameraRunning) {
-        stopCameraAndPose();
-    }
-    cameraScreen.style.display = 'none';
-    settingScreen.style.display = 'flex';
-});
 
 /* =========================
 MediaPipe Pose 初期化

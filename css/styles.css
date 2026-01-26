@@ -336,30 +336,6 @@ MediaPipe 用の入力元
 }
 
 /* =========================
-戻るボタン
-カメラ画面 → 設定画面へ戻る
-========================= */
-#backButton {
-    margin-top: 20px;
-    padding: 10px 25px;
-    font-size: 16px;
-    cursor: pointer;
-    background-color: #6c757d;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
-
-/* =========================
-戻るボタン（ホバー時）
-操作可能であることを強調
-========================= */
-#backButton:hover {
-    background-color: #5a6268;
-}
-
-/* =========================
 モチベーションメッセージ
 右上にスライド表示される通知
 ========================= */
