@@ -234,15 +234,22 @@ function getMaxScore() {
 }
 
 function checkAndSaveMaxScore(currentScoreMs) {
-    const maxScore = getMaxScore();
+    let maxScore = getMaxScore();
+
+    // 自己ベスト更新時のみローカル保存
     if (currentScoreMs > maxScore) {
+        maxScore = currentScoreMs;
         const user = getCurrentUser();
         if (user) {
-            localStorage.setItem(`maxScore_${user}`, currentScoreMs);
-            console.log(`🎉 New Max Score Saved: ${currentScoreMs}ms`);
-            // Firestoreに保存 (最長記録: max)
-            updateFirestoreUser({ max: currentScoreMs });
+            localStorage.setItem(`maxScore_${user}`, maxScore);
+            console.log(`🎉 New Max Score Saved: ${maxScore}ms`);
         }
+    }
+
+    // Firestoreには常に最新のMax値を保存（同期漏れ防止）
+    const user = getCurrentUser();
+    if (user) {
+        updateFirestoreUser({ max: maxScore });
     }
 }
 
