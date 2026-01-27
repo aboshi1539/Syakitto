@@ -100,52 +100,80 @@
     </div>
 
     <!-- 設定画面 -->
-    <div id="settingScreen" class="hidden flex-col items-center justify-center h-screen max-w- w-screen">
+    <div id="settingScreen" class="w-screen h-screen pt-20 px-5 flex flex-col items-center">
+        <!-- 白の背景 -->
+        <div class="w-full max-w-[600px] bg-white rounded-2xl shadow-lg p-5">
+            <!-- カテゴリタブ -->
+            <div class="flex wfull max-w-[600px] mb-6 rounded-xl overflow-hidden border">
+                <!-- モチベーション -->
+                <button class="setting-tab flex-1 px-4 py-3 text-center font-bold bg-blue-500 text-white whitespace-nowrap"
+                data-target="motivation">
+                    <!-- スマホ：絵文字だけ -->
+                    <span class="sm:hidden">🧠</span>
 
-        <div class="bg-white p-10 rounded-2xl shadow-xl w-full max-w-[500px]">
-            <div id="maxScoreContainer" class="mb-4 text-center">
-                <p class="text-lg text-gray-500 font-bold mb-1">最長スコア</p>
-                <p id="maxScoreValue" class="text-4xl font-bold text-[#28a745]">--分--秒</p>
+                    <!-- PC：絵文字＋文字 -->
+                    <span class="hidden sm:inline">🧠 モチベーション</span> 
+                </button>
+                
+                <!-- カメラ｜サウンド -->
+                <button class="setting-tab flex-1 px-4 py-3 text-center font-bold bg-gray-100 whitespace-nowrap"
+                data-target="cameraSound">
+                    <span class="sm:hidden">🎥</span>
+                    <span class="hidden sm:inline">🎥 カメラ・サウンド</span>
+                </button>
+                <!-- アカウント -->
+                <button class="setting-tab flex-1 px-4 py-3 text-center font-bold bg-gray-100 whitespace-nowrap"
+                data-target="account">
+                    <span class="sm:hidden">👤</span>
+                    <span class="hidden sm:inline">👤 アカウント</span>
+                </button>
             </div>
-            <div id="avgScoreContainer" class="mb-6 text-center">
-                <p class="text-sm text-gray-500 font-bold mb-1">平均姿勢維持時間</p>
-                <p id="avgScoreValue" class="text-2xl font-bold text-[#4285f4]">--分--秒</p>
-            </div>
-            <div class="mb-5 flex flex-col items-center">
-                <label class="font-bold text-[#555] mb-2">判定モード</label>
-                <div class="flex gap-4">
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="detectMode" value="side" checked
-                            class="w-4 h-4 text-[#007bff] focus:ring-[#007bff]">
-                        横向き（角度）
-                    </label>
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="detectMode" value="front"
-                            class="w-4 h-4 text-[#007bff] focus:ring-[#007bff]">
-                        正面（奥行き）
-                    </label>
-                </div>
-            </div>
-            <div class="mb-5 flex flex-col items-center">
-                <label class="font-bold text-[#555] mb-2">猫背アラート音</label>
-                <div class="flex items-center gap-3">
-                    <span class="text-sm font-bold text-gray-400">OFF</span>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="soundToggle" class="sr-only peer">
-                        <div
-                            class="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-[#007bff]">
-                        </div>
-                    </label>
-                    <span class="text-sm font-bold text-[#007bff]">ON</span>
-                </div>
-            </div>
+                <!-- 設定内容エリア -->
+            <div class="w-full max-w-[600px] bg-white rounded-2xl shadow-lg p-5">
+                                    <!-- モチベーション -->
+                <div id="motivation" class="setting-content">
+                    <p class="font-bold mb-3">🧠 モチベーション設定</p>
+                    <!-- 目標時間 -->
+                    <div class="mb-6">
+                        <label class="block font-bold mb-2">
+                            🎯 今日の目標時間
+                        </label>
 
-            <button id="toCameraFromSetting"
-                class="w-full py-[15px] px-[30px] text-xl font-bold cursor-pointer bg-[#28a745] text-white border-none rounded-lg transition-all duration-300 shadow-md hover:bg-[#218838] hover:-translate-y-0.5 hover:shadow-lg">カメラ画面へ</button>
+                        <input type="range"
+                            id="targetTime"
+                            min="10"
+                            max="120"
+                            step="5"
+                            value="30"
+                            class="w-full">
+
+                        <p class="mt-2 text-sm text-gray-600">
+                            現在の目標：<span id="targetTimeValue" class="font-bold">30</span> 分
+                        </p>
+                    </div>
+                    <p>・猫背判定までの時間</p>
+                </div>
+
+                <!-- カメラ・サウンド -->
+                <div id="cameraSound" class="setting-content hidden">
+                    <p class="font-bold mb-3">🎥 カメラ・サウンド設定</p>
+                    <p>・カメラ映像 ON / OFF</p>
+                    <p>・通知音 ON / OFF</p>
+                    <p>・通知音の種類</p>
+                </div>
+                <!-- アカウント -->
+                <div id="account" class="setting-content hidden">
+                    <p class="font-bold mb-3">👤 アカウント</p>
+                    <p>・アイコン</p>
+                    <p>・データ初期化</p>
+                    <p>・ログアウト</p>
+                </div>
+                <button id="toCameraFromSetting"
+                class="w-full py-[15px] px-[30px] text-xl font-bold cursor-pointer bg-[#28a745] text-white border-none rounded-lg transition-all duration-300 shadow-md hover:bg-[#218838] hover:-translate-y-0.5 hover:shadow-lg"
+                >カメラ画面へ</button>
+            </div>
         </div>
-
-    </div>
-
+    </div> 
     <!-- カメラ画面 -->
     <div id="cameraScreen" class="hidden min-h-screen flex justify-center items-stretch pt-6 or px-4">
 

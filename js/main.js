@@ -22,7 +22,11 @@ const maxScoreValueEl = document.getElementById("maxScoreValue");
 const avgScoreValueEl = document.getElementById("avgScoreValue");
 const userMenuButton = document.getElementById("userMenuButton");
 const userMenu = document.getElementById("userMenu");
-
+const tabs = document.querySelectorAll(".setting-tab");
+const contents = document.querySelectorAll(".setting-content");
+const targetTimeInput = document.getElementById("targetTime");
+const targetTimeValue = document.getElementById("targetTimeValue");
+const difficultyRadios = document.querySelectorAll('input[name="difficulty"]');
 
 // 記録用のオブジェクト
 let postureLog = getPostureLog();
@@ -51,8 +55,6 @@ let badPostureStartTime = null;
 
 // 設定値
 // 設定値 (固定)
-// 設定値 (固定)
-// 設定値 (固定)
 const SLOUCH_THRESHOLD = 160;
 const DETECTION_CONFIDENCE = 0.5;
 // 正面判定の閾値（肩のZ - 鼻のZ）
@@ -61,14 +63,46 @@ const DETECTION_CONFIDENCE = 0.5;
 const FRONT_SLOUCH_THRESHOLD = 0.7;
 
 // 判定モード ("side" or "front")
-// 判定モード ("side" or "front")
 let currentDetectMode = "side";
 
 // 音声通知設定
 let isSoundEnabled = false;
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
+//クリック切り替え（設定）
+tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
 
+        // 全部非表示
+        contents.forEach(c => c.classList.add("hidden"));
+
+        // 全部タブを非アクティブ
+        tabs.forEach(t => {
+            t.classList.remove("bg-blue-500", "text-white");
+            t.classList.add("bg-gray-100");
+        });
+
+        // 対象を表示
+        const targetId = tab.dataset.target;
+        document.getElementById(targetId).classList.remove("hidden");
+
+        // タブをアクティブに
+        tab.classList.remove("bg-gray-100");
+        tab.classList.add("bg-blue-500", "text-white");
+    });
+});
+// 初期読み込み
+const savedTargetTime = localStorage.getItem("targetTime");
+if (savedTargetTime) {
+    targetTimeInput.value = savedTargetTime;
+    targetTimeValue.textContent = savedTargetTime;
+}
+
+// スライダー変更時
+targetTimeInput.addEventListener("input", () => {
+    targetTimeValue.textContent = targetTimeInput.value;
+    localStorage.setItem("targetTime", targetTimeInput.value);
+});
 // 画面切り替え（必ず先に定義）
 function showScreen(screen) {
     const screens = ["loginScreen", "settingScreen", "cameraScreen", "scoreScreen"];
