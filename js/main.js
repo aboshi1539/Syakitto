@@ -27,6 +27,8 @@ const contents = document.querySelectorAll(".setting-content");
 const targetTimeInput = document.getElementById("targetTime");
 const targetTimeValue = document.getElementById("targetTimeValue");
 const difficultyRadios = document.querySelectorAll('input[name="difficulty"]');
+const slouchDelaySlider = document.getElementById("slouchDelaySlider");
+const slouchDelayValue = document.getElementById("slouchDelayValue");
 
 // 記録用のオブジェクト
 let postureLog = getPostureLog();
@@ -44,7 +46,8 @@ let lastPostureState = null;
 let lastMessageMilestone = 0;
 let detectionIntervalId = null; // カメラループ用のInterval ID
 
-
+// 猫背と判定するまでの待ち時間（ms）
+let slouchDetectDelay = Number(localStorage.getItem("slouchDetectDelay")) || 2000; // 初期2秒
 // 猫背状態の時間管理
 let slouchStartTime = null;
 const SLOUCH_RESET_THRESHOLD = 5000;
@@ -68,6 +71,17 @@ let currentDetectMode = "side";
 // 音声通知設定
 let isSoundEnabled = false;
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+// 初期表示
+slouchDelayValue.textContent = slouchDetectDelay / 1000;
+slouchDelaySlider.value = slouchDetectDelay / 1000;
+
+slouchDelaySlider.addEventListener("input", () => {
+    const seconds = Number(slouchDelaySlider.value);
+    slouchDetectDelay = seconds * 1000;
+    slouchDelayValue.textContent = seconds;
+    localStorage.setItem("slouchDetectDelay", slouchDetectDelay);
+});
 
 //クリック切り替え（設定）
 tabs.forEach(tab => {
@@ -97,13 +111,12 @@ if (savedTargetTime) {
     targetTimeInput.value = savedTargetTime;
     targetTimeValue.textContent = savedTargetTime;
 }
-
 // スライダー変更時
 targetTimeInput.addEventListener("input", () => {
     targetTimeValue.textContent = targetTimeInput.value;
     localStorage.setItem("targetTime", targetTimeInput.value);
 });
-// 画面切り替え（必ず先に定義）
+// 画面切り替え
 function showScreen(screen) {
     const screens = ["loginScreen", "settingScreen", "cameraScreen", "scoreScreen"];
     screens.forEach(id => {
@@ -112,7 +125,6 @@ function showScreen(screen) {
     });
     if (screen) screen.style.display = "flex";
 }
-
 // 現在時刻を取得する関数
 function getNowKey() {
     const now = new Date();
@@ -120,7 +132,6 @@ function getNowKey() {
     const hourKey = String(now.getHours()).padStart(2, '0'); // 00〜23
     return { dateKey, hourKey };
 }
-
 // 時間を加算する関数
 function addPostureLog(type, elapsedMs) {
     const { dateKey, hourKey } = getNowKey();
@@ -133,7 +144,6 @@ function addPostureLog(type, elapsedMs) {
     postureLog[dateKey][hourKey][type] += elapsedMs;
     savePostureLog(postureLog);
 }
-
 // 日付が変わった瞬間の対策する関数
 function checkDateChange(currentTime) {
     const nowKey = getNowKey().dateKey;
@@ -152,7 +162,6 @@ function checkDateChange(currentTime) {
         lastDateKey = nowKey;
     }
 }
-
 // 直近1週間の日付配列を作る関数
 function getLast7Days() {
     const days = [];
@@ -166,7 +175,6 @@ function getLast7Days() {
     }
     return days;
 }
-
 // 日付ごとの合計時間を集計する関数
 function getWeeklySummary() {
     const log = getPostureLog();
@@ -190,7 +198,6 @@ function getWeeklySummary() {
     });
     return { labels, goodData, badData };
 }
-
 // 棒グラフを描画する関数
 function renderWeeklyChart() {
     const { labels, goodData, badData } = getWeeklySummary();
@@ -228,13 +235,13 @@ function renderWeeklyChart() {
         }
     });
 }
-
+//
 function getPostureLog() {
     const user = getCurrentUser();
     if (!user) return {};
     return JSON.parse(localStorage.getItem(`postureLog_${user}`)) || {};
 }
-
+//
 function savePostureLog(log) {
     const user = getCurrentUser();
     if (!user) return;
@@ -431,6 +438,7 @@ document.addEventListener("click", (e) => {
 });
 //設定を開く
 function openSetting() {
+    hideCameraView();              // ← カメラ表示だけOFF
     userMenu.classList.add("hidden");
     showScreen(settingScreen); // 既存の画面切り替え関数を使う想定
 }
@@ -552,7 +560,8 @@ pose.onResults((results) => {
     }
 
     if (results.poseLandmarks) {
-        const { isSlouching, angle } = detectSlouch(results.poseLandmarks);
+        const now = Date.now();
+        const { isSlouching: rawSlouch, angle } = detectSlouch(results.poseLandmarks);
         const currentTime = Date.now();
 
         // 肩と腰の中点を計算して背骨を描画
@@ -560,6 +569,22 @@ pose.onResults((results) => {
         const rightShoulder = results.poseLandmarks[12];
         const leftHip = results.poseLandmarks[23];
         const rightHip = results.poseLandmarks[24];
+        let isSlouching = false;
+
+        // 猫背っぽい姿勢になった
+        if (rawSlouch) {
+            if (slouchStartTime === null) {
+                slouchStartTime = now; // カウント開始
+            }
+
+            // 一定時間続いたら猫背確定
+            if (now - slouchStartTime >= slouchDetectDelay) {
+                isSlouching = true;
+            }
+        } else {
+            // 姿勢が戻ったらリセット
+            slouchStartTime = null;
+        }
 
         if (leftShoulder && rightShoulder && leftHip && rightHip) {
             const shoulderMidX = (leftShoulder.x + rightShoulder.x) / 2;
@@ -704,7 +729,7 @@ function showScoreScreen() {
 backToSettingButton.addEventListener("click", () => {
     showScreen(settingScreen);
 });
-
+//カメラをオンにする関数
 async function startCameraAndPose() {
     if (isCameraRunning) return;
 
@@ -775,7 +800,7 @@ async function startCameraAndPose() {
         alert("カメラの起動に失敗しました。カメラの権限を確認してください。");
     }
 }
-
+//カメラをオフにする関数
 function stopCameraAndPose() {
     if (!isCameraRunning) return;
 
@@ -852,6 +877,20 @@ window.addEventListener('beforeunload', () => {
         stopCameraAndPose();
     }
 });
+
+function hideCameraView() {
+    const cameraView = document.getElementById("cameraView");
+    if (cameraView) {
+        cameraView.style.display = "none";
+    }
+}
+
+function showCameraView() {
+    const cameraView = document.getElementById("cameraView");
+    if (cameraView) {
+        cameraView.style.display = "block";
+    }
+}
 
 async function updateFirestoreUser(data) {
     const uid = localStorage.getItem("firebaseUID");
@@ -941,6 +980,7 @@ if (toCameraFromSetting) {
     toCameraFromSetting.addEventListener("click", () => {
         settingScreen.style.display = "none";
         cameraScreen.style.display = "flex";
+        showCameraView();  
 
         pose.setOptions({
             modelComplexity: 1,
