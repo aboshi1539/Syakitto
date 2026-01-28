@@ -3,7 +3,6 @@
 アプリ共通のレイアウト・背景
 ========================= */
 body {
-    overflow: hidden;
     font-family: Arial, sans-serif;
     display: flex;
     flex-direction: column;

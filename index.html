@@ -41,8 +41,7 @@
 </head>
 
 
-<body class="min-h-screen flex flex-col items-center font-sans bg-cover bg-no-repeat m-0 overflow-hidden"
-    style="background-image:
+<body class="min-h-screen flex flex-col items-center font-sans bg-cover bg-no-repeat m-0" style="background-image:
     url('./img/haikei.jpg');">
     <!-- ヘッダー -->
     <header class="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-md shadow-sm z-50 flex justify-start px-4 py-4">
@@ -53,33 +52,29 @@
         <!-- 余白 -->
         <div class="flex-1"></div>
         <!-- ユーザーアイコン -->
-            <div class="relative">
-                <!-- タップする部分 -->
-                <button id="userMenuButton"
-                    class="flex items-center gap-2
+        <div class="relative">
+            <!-- タップする部分 -->
+            <button id="userMenuButton" class="flex items-center gap-2
                     text-[#500] bg-[#f8f9fa]
                     px-3 py-2 rounded-lg
                     border-1-4 border-[#007bff]
                     whitespace-nowrap">
-                    👤 
-                    <span class="font-bold text-[#007bff] loginUserName">---</span>
-                </button>
-                <!-- ドロップダウンメニュー -->
-                <div id="userMenu"
-                    class="hidden absolute right-0 mt-2 w-40
+                👤
+                <span class="font-bold text-[#007bff] loginUserName">---</span>
+            </button>
+            <!-- ドロップダウンメニュー -->
+            <div id="userMenu" class="hidden absolute right-0 mt-2 w-40
                     bg-white rounded-lg shadow-lg border z-50">
-                    <!-- 詳細設定 -->
-                    <button class="w-full text-left px-4 py-2 hover:bg-gray-100"
-                        onclick="openSetting()">
-                        ⚙ 設定
-                    </button>   
-                    <!-- ログアウトボタン -->
-                    <button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
-                        onclick="logout()">
-                        🚪 ログアウト
-                    </button>                 
-                </div>
+                <!-- 詳細設定 -->
+                <button class="w-full text-left px-4 py-2 hover:bg-gray-100" onclick="openSetting()">
+                    ⚙ 設定
+                </button>
+                <!-- ログアウトボタン -->
+                <button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600" onclick="logout()">
+                    🚪 ログアウト
+                </button>
             </div>
+        </div>
 
     </header>
     <!-- ログイン画面だよ -->
@@ -100,37 +95,38 @@
     </div>
 
     <!-- 設定画面 -->
-    <div id="settingScreen" class="w-screen h-screen pt-20 px-5 flex flex-col items-center">
+    <div id="settingScreen" class="w-screen min-h-screen pt-20 px-5 flex flex-col items-center">
         <!-- 白の背景 -->
         <div class="w-full max-w-[600px] bg-white rounded-2xl shadow-lg p-5">
             <!-- カテゴリタブ -->
             <div class="flex wfull max-w-[600px] mb-6 rounded-xl overflow-hidden border">
                 <!-- モチベーション -->
-                <button class="setting-tab flex-1 px-4 py-3 text-center font-bold bg-blue-500 text-white whitespace-nowrap"
-                data-target="motivation">
+                <button
+                    class="setting-tab flex-1 px-4 py-3 text-center font-bold bg-blue-500 text-white whitespace-nowrap"
+                    data-target="motivation">
                     <!-- スマホ：絵文字だけ -->
                     <span class="sm:hidden">🧠</span>
 
                     <!-- PC：絵文字＋文字 -->
-                    <span class="hidden sm:inline">🧠 モチベーション</span> 
+                    <span class="hidden sm:inline">🧠 モチベーション</span>
                 </button>
-                
+
                 <!-- カメラ｜サウンド -->
                 <button class="setting-tab flex-1 px-4 py-3 text-center font-bold bg-gray-100 whitespace-nowrap"
-                data-target="cameraSound">
+                    data-target="cameraSound">
                     <span class="sm:hidden">🎥</span>
                     <span class="hidden sm:inline">🎥 カメラ・サウンド</span>
                 </button>
                 <!-- アカウント -->
                 <button class="setting-tab flex-1 px-4 py-3 text-center font-bold bg-gray-100 whitespace-nowrap"
-                data-target="account">
+                    data-target="account">
                     <span class="sm:hidden">👤</span>
                     <span class="hidden sm:inline">👤 アカウント</span>
                 </button>
             </div>
-                <!-- 設定内容エリア -->
+            <!-- 設定内容エリア -->
             <div class="w-full max-w-[600px] bg-white rounded-2xl shadow-lg p-5">
-                                    <!-- モチベーション -->
+                <!-- モチベーション -->
                 <div id="motivation" class="setting-content">
                     <p class="font-bold mb-3">🧠 モチベーション設定</p>
                     <!-- 目標時間 -->
@@ -139,13 +135,7 @@
                             🎯 今日の目標時間
                         </label>
 
-                        <input type="range"
-                            id="targetTime"
-                            min="10"
-                            max="120"
-                            step="5"
-                            value="30"
-                            class="w-full">
+                        <input type="range" id="targetTime" min="10" max="120" step="5" value="30" class="w-full">
 
                         <p class="mt-2 text-sm text-gray-600">
                             現在の目標：<span id="targetTimeValue" class="font-bold">30</span> 分
@@ -153,13 +143,7 @@
                         <label class="block text-sm font-bold mb-1">
                             猫背と判定するまでの時間（秒）
                         </label>
-                        <input type="range"
-                            min="0"
-                            max="5"
-                            step="0.5"
-                            id="slouchDelaySlider"
-                            value="2"
-                            class="w-full">
+                        <input type="range" min="0" max="5" step="0.5" id="slouchDelaySlider" value="2" class="w-full">
                         <p class="text-sm text-gray-600">
                             <span id="slouchDelayValue">2</span> 秒
                         </p>
@@ -181,11 +165,10 @@
                     <p>・ログアウト</p>
                 </div>
                 <button id="toCameraFromSetting"
-                class="w-full py-[15px] px-[30px] text-xl font-bold cursor-pointer bg-[#28a745] text-white border-none rounded-lg transition-all duration-300 shadow-md hover:bg-[#218838] hover:-translate-y-0.5 hover:shadow-lg"
-                >カメラ画面へ</button>
+                    class="w-full py-[15px] px-[30px] text-xl font-bold cursor-pointer bg-[#28a745] text-white border-none rounded-lg transition-all duration-300 shadow-md hover:bg-[#218838] hover:-translate-y-0.5 hover:shadow-lg">カメラ画面へ</button>
             </div>
         </div>
-    </div> 
+    </div>
     <!-- カメラ画面 -->
     <div id="cameraScreen" class="hidden min-h-screen flex justify-center items-stretch pt-6 or px-4">
 
